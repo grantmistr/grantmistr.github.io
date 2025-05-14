@@ -1,4 +1,13 @@
-function UpdateHeaderButtonLogoViewBox()
+import { InitShaderProgram } from "../../shader/shaderLoader.js";
+import { gl, ProgramInfo, StartRender } from "./webGL.js";
+
+function Init(): void
+{
+    UpdateHeaderButtonLogoViewBox();
+    InitWebGL();
+}
+
+function UpdateHeaderButtonLogoViewBox(): void
 {
     const headerButtonLogos: NodeListOf<SVGElement> = document.querySelectorAll<SVGElement>('.headerButtonLogo');
 
@@ -14,4 +23,39 @@ function UpdateHeaderButtonLogoViewBox()
     });
 }
 
-UpdateHeaderButtonLogoViewBox();
+function InitWebGL(): void
+{
+    const webGLCanvas: HTMLCanvasElement | null = document.querySelector<HTMLCanvasElement>('#webGLCanvas');
+    //const webGLCanvas: HTMLCanvasElement = document.getElementById('#webGLCanvas') as HTMLCanvasElement;
+    
+    if (webGLCanvas === null)
+    {
+        console.log("Canvas Null");
+        return;
+    }
+
+    gl.Initialize(webGLCanvas);
+    StartRender();
+
+    LoadShaderProgram();
+}
+
+async function LoadShaderProgram(): Promise<void>
+{
+    if (gl.gl === null)
+    {
+        return;
+    }
+
+    const shaderProgram = await InitShaderProgram(gl.gl, './public/shaders/shader0/vertexProgram.vert', './public/shaders/shader0/fragmentProgram.frag');
+
+    if (shaderProgram === null)
+    {
+        return;
+    }
+
+    const programInfo = new ProgramInfo(gl.gl, shaderProgram);
+    gl.programInfo = programInfo;
+}
+
+Init();

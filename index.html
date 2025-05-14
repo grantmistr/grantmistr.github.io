@@ -3,15 +3,18 @@
 <html lang="en-US">
 
 <head>
-    <meta charset="utf-8"/>
-    <meta name="viewport" content="width=device-width"/>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width" />
     <title>Grant Mistr | Website</title>
-    <link href="src/index.css" rel="stylesheet"/>
+    <link href="./src/pages/index/index.css" rel="stylesheet" />
+    <!-- <script src="https://cdnjs.com/libraries/gl-matrix"></script> -->
 </head>
 
 <body>
     <div id="backgroundGradient" />
-
+    <div id="webGLCanvasWrapper">
+        <canvas id="webGLCanvas" />
+    </div>
     <div id="header">
         <h1 id="headerTitle">grantmistr.github.io</h1>
         <div id="headerButtons">
@@ -75,7 +78,7 @@
                         grantmistr@gmail.com
                     </span>
                 </div>
-                <hr/>
+                <hr />
                 <div class="contactInfoField">
                     <b>
                         Discord
@@ -87,7 +90,7 @@
             </div>
         </div>
     </div>
-    <script src="src/pages/index/index.js"></script>
+    <script src="src/pages/index/index.js" type="module"></script>
 </body>
 
 </html>
