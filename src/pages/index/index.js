@@ -1,5 +1,6 @@
+import * as ProgramInfo from "../../shader/programInfo.js";
 import { InitShaderProgram } from "../../shader/shaderLoader.js";
-import { gl, ProgramInfo, StartRender } from "./webGL.js";
+import { gl, StartRender } from "../../shader/webGL.js";
 function Init() {
     UpdateHeaderButtonLogoViewBox();
     InitWebGL();
@@ -29,11 +30,11 @@ async function LoadShaderProgram() {
     if (gl.gl === null) {
         return;
     }
-    const shaderProgram = await InitShaderProgram(gl.gl, './public/shaders/shader0/vertexProgram.vert', './public/shaders/shader0/fragmentProgram.frag');
+    const shaderProgram = await InitShaderProgram(gl.gl, './public/shaders/shader1/vertexProgram.vert', './public/shaders/shader1/fragmentProgram.frag');
     if (shaderProgram === null) {
         return;
     }
-    const programInfo = new ProgramInfo(gl.gl, shaderProgram);
+    const programInfo = new ProgramInfo.Shader1ProgramInfo(gl.gl, shaderProgram);
     gl.programInfo = programInfo;
 }
 Init();

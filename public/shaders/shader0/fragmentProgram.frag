@@ -85,7 +85,7 @@ void main()
 
     float r = Random(pos01);
 
-    vec3 color0 = Lerp(vec3(0.1, 0.1, 0.0), vec3(0.4, 0.2, 0.1), dot(posNDC, vec2(0.25, -0.25)) + r * 0.1);
+    vec3 color0 = Lerp(vec3(0.1, 0.1, 0.0), vec3(0.4, 0.2, 0.1), dot(posNDC, vec2(0.25, -0.25)) + r * 0.05);
     vec3 color1 = vec3(pos01.x * c, pos01.y * c, 0.0);
     vec3 color = Lerp(color0, color1, c * 0.25);
 
