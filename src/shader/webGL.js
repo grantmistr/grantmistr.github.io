@@ -1,5 +1,7 @@
 export class Uniforms {
     time = 0.0;
+    deltaTime = 0.0;
+    mouseClickTime = 0.0;
     screenSize = {
         x: 0.0,
         y: 0.0
@@ -8,7 +10,12 @@ export class Uniforms {
         x: 0.0,
         y: 0.0
     };
+    mouseClickPosition = {
+        x: 0.0,
+        y: 0.0
+    };
     Update(timeSinceLoad) {
+        this.deltaTime = timeSinceLoad - this.time;
         this.time = timeSinceLoad;
     }
 }
@@ -16,6 +23,7 @@ class GLCTX {
     gl = null;
     programInfo = null;
     uniforms = new Uniforms();
+    mouseClickLock = false;
     Initialize(canvas) {
         this.gl = canvas.getContext("webgl2");
         if (this.gl === null) {
@@ -40,6 +48,25 @@ class GLCTX {
         window.addEventListener('mousemove', (e) => {
             this.uniforms.mousePosition.x = e.clientX;
             this.uniforms.mousePosition.y = e.clientY;
+        });
+        window.addEventListener('mousedown', (e) => {
+            // if (!this.mouseClickLock)
+            // {
+            //     this.mouseClickLock = true;
+            //     this.uniforms.mouseClickPosition.x = e.clientX;
+            //     this.uniforms.mouseClickPosition.y = e.clientY;
+            //     this.uniforms.mouseClickTime = this.uniforms.time;
+            // }
+            // else
+            // {
+            //     if ((this.uniforms.time - this.uniforms.mouseClickTime) > 1000.0)
+            //     {
+            //         this.mouseClickLock = false;
+            //     }
+            // }
+            this.uniforms.mouseClickPosition.x = e.clientX;
+            this.uniforms.mouseClickPosition.y = e.clientY;
+            this.uniforms.mouseClickTime = this.uniforms.time;
         });
     }
     Update(timeSinceLoad) {

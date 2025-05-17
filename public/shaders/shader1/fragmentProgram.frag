@@ -5,8 +5,10 @@ precision highp float;
 in vec3 vColor;
 
 uniform float uTime;
+uniform float uMouseClickTime;
 uniform vec2 uScreenSize;
 uniform vec2 uMousePosition;
+uniform vec2 uMouseClickPosition;
 
 out vec4 fragColor;
 
@@ -86,11 +88,17 @@ void main()
     vec2 mousePosNDCAspect = vec2(mousePosNDC.x * aspect, mousePosNDC.y);
     vec2 mousePosNDCAspectRot = RotateVec2(mousePosNDCAspect, uTime * 0.00001);
 
+    vec2 mouseClickPos01 = vec2(uMouseClickPosition.x / uScreenSize.x, 1.0 - uMouseClickPosition.y / uScreenSize.y);
+    vec2 mouseClickPosNDC = vec2(mouseClickPos01.x * 2.0 - 1.0, mouseClickPos01.y * 2.0 - 1.0);
+    vec2 mouseClickPosNDCAspect = vec2(mouseClickPosNDC.x * aspect, mouseClickPosNDC.y);
+    vec2 mouseClickPosNDCAspectRot = RotateVec2(mouseClickPosNDCAspect, uTime * 0.00001);
+
     float r = Random(pos01); // per-pixel random for dithering and stuff
 
     float scale = 15.0;
 
     vec2 scaledMousePosNDC = vec2(mousePosNDCAspectRot.x * scale, mousePosNDCAspectRot.y * scale);
+    vec2 scaledMouseClickPosNDC = vec2(mouseClickPosNDCAspectRot.x * scale, mouseClickPosNDCAspectRot.y * scale);
 
     vec2 scaledPosNDC = vec2(posNDCAspectRot.x * scale, posNDCAspectRot.y * scale);
     vec2 flooredScaledPosNDC = vec2(floor(scaledPosNDC.x), floor(scaledPosNDC.y));
@@ -98,6 +106,11 @@ void main()
 
     float mouseInfluence = length(scaledMousePosNDC - cellCenter);
     mouseInfluence = max(1.0 - mouseInfluence * 0.25, 0.0);
+
+    float mouseClickInfluence = length(scaledMouseClickPosNDC - cellCenter) < ((uTime - uMouseClickTime) * 0.01) ? 1.0 : 0.0;
+    mouseClickInfluence *= max(1.0 - (uTime - uMouseClickTime) * 0.001, 0.0);
+
+    mouseInfluence += mouseClickInfluence;
 
     float randIndex = Random(flooredScaledPosNDC);
     vec2 tiledPos01 = vec2(fract(scaledPosNDC.x), fract(scaledPosNDC.y));

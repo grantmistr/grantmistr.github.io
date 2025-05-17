@@ -3,6 +3,8 @@ import { ProgramInfo } from "./programInfo.js";
 export class Uniforms
 {
     public time: number = 0.0;
+    public deltaTime: number = 0.0;
+    public mouseClickTime: number = 0.0;
     public screenSize = 
     {
         x: 0.0,
@@ -13,9 +15,15 @@ export class Uniforms
         x: 0.0,
         y: 0.0
     };
+    public mouseClickPosition = 
+    {
+        x: 0.0,
+        y: 0.0
+    };
 
     public Update(timeSinceLoad: number): void
     {
+        this.deltaTime = timeSinceLoad - this.time;
         this.time = timeSinceLoad;
     }
 }
@@ -25,6 +33,8 @@ class GLCTX
     public gl: WebGL2RenderingContext | null = null;
     public programInfo: ProgramInfo | null = null;
     public uniforms: Uniforms = new Uniforms();
+
+    private mouseClickLock: boolean = false;
 
     public Initialize(canvas: HTMLCanvasElement): void
     {
@@ -62,6 +72,29 @@ class GLCTX
         {
             this.uniforms.mousePosition.x = e.clientX;
             this.uniforms.mousePosition.y = e.clientY;
+        });
+
+        window.addEventListener('mousedown', (e: MouseEvent) =>
+        {
+            // if (!this.mouseClickLock)
+            // {
+            //     this.mouseClickLock = true;
+
+            //     this.uniforms.mouseClickPosition.x = e.clientX;
+            //     this.uniforms.mouseClickPosition.y = e.clientY;
+            //     this.uniforms.mouseClickTime = this.uniforms.time;
+            // }
+            // else
+            // {
+            //     if ((this.uniforms.time - this.uniforms.mouseClickTime) > 1000.0)
+            //     {
+            //         this.mouseClickLock = false;
+            //     }
+            // }
+
+            this.uniforms.mouseClickPosition.x = e.clientX;
+            this.uniforms.mouseClickPosition.y = e.clientY;
+            this.uniforms.mouseClickTime = this.uniforms.time;
         });
     }
 

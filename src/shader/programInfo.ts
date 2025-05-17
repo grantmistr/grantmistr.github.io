@@ -103,8 +103,10 @@ export class Shader1ProgramInfo extends ProgramInfo
     private uLoc:
     {
         time: WebGLUniformLocation | null,
+        mouseClickTime: WebGLUniformLocation | null,
         screenSize: WebGLUniformLocation | null,
-        mousePosition: WebGLUniformLocation | null
+        mousePosition: WebGLUniformLocation | null,
+        mouseClickPosition: WebGLUniformLocation | null
     };
 
     public constructor(gl: WebGL2RenderingContext, program: WebGLProgram)
@@ -119,8 +121,10 @@ export class Shader1ProgramInfo extends ProgramInfo
         this.uLoc =
         {
             time: gl.getUniformLocation(program, 'uTime'),
+            mouseClickTime: gl.getUniformLocation(program, 'uMouseClickTime'),
             screenSize: gl.getUniformLocation(program, 'uScreenSize'),
-            mousePosition: gl.getUniformLocation(program, 'uMousePosition')
+            mousePosition: gl.getUniformLocation(program, 'uMousePosition'),
+            mouseClickPosition: gl.getUniformLocation(program, 'uMouseClickPosition')
         };
 
         this.vertexIDBuffer = gl.createBuffer();
@@ -138,8 +142,10 @@ export class Shader1ProgramInfo extends ProgramInfo
     protected UpdateUniforms(gl: WebGL2RenderingContext, uniforms: Uniforms): void
     {
         gl.uniform1f(this.uLoc.time, uniforms.time);
+        gl.uniform1f(this.uLoc.mouseClickTime, uniforms.mouseClickTime);
         gl.uniform2f(this.uLoc.screenSize, uniforms.screenSize.x, uniforms.screenSize.y);
         gl.uniform2f(this.uLoc.mousePosition, uniforms.mousePosition.x, uniforms.mousePosition.y);
+        gl.uniform2f(this.uLoc.mouseClickPosition, uniforms.mouseClickPosition.x, uniforms.mouseClickPosition.y);
     }
 
     protected ProgramLogic(gl: WebGL2RenderingContext): void
