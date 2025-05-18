@@ -68,6 +68,15 @@ class GLCTX {
             this.uniforms.mouseClickPosition.y = e.clientY;
             this.uniforms.mouseClickTime = this.uniforms.time;
         });
+        window.addEventListener('touchmove', (e) => {
+            this.uniforms.mousePosition.x = e.touches[0].clientX;
+            this.uniforms.mousePosition.y = e.touches[0].clientY;
+        });
+        window.addEventListener('touchstart', (e) => {
+            this.uniforms.mouseClickPosition.x = e.touches[0].clientX;
+            this.uniforms.mouseClickPosition.y = e.touches[0].clientY;
+            this.uniforms.mouseClickTime = this.uniforms.time;
+        });
     }
     Update(timeSinceLoad) {
         this.uniforms.Update(timeSinceLoad);

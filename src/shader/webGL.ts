@@ -96,6 +96,19 @@ class GLCTX
             this.uniforms.mouseClickPosition.y = e.clientY;
             this.uniforms.mouseClickTime = this.uniforms.time;
         });
+        
+        window.addEventListener('touchmove', (e: TouchEvent) =>
+        {
+            this.uniforms.mousePosition.x = e.touches[0].clientX;
+            this.uniforms.mousePosition.y = e.touches[0].clientY;
+        });
+
+        window.addEventListener('touchstart', (e: TouchEvent) => 
+        {
+            this.uniforms.mouseClickPosition.x = e.touches[0].clientX;
+            this.uniforms.mouseClickPosition.y = e.touches[0].clientY;
+            this.uniforms.mouseClickTime = this.uniforms.time;
+        });
     }
 
     public Update(timeSinceLoad: number): void
