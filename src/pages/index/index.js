@@ -34,7 +34,7 @@ async function LoadShaderProgram() {
     if (shaderProgram === null) {
         return;
     }
-    const programInfo = new ProgramInfo.Shader1ProgramInfo(gl.gl, shaderProgram);
+    const programInfo = new ProgramInfo.Shader2ProgramInfo(gl.gl, shaderProgram);
     gl.programInfo = programInfo;
 }
 Init();
