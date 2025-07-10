@@ -1,0 +1,39 @@
+.outer {
+    width: 150px;
+    height: 150px;
+    align-content: center;
+}
+
+.inner {
+    width: 80%;
+    height: 80%;
+    font-size: 80%;
+    font-style: italic;
+    margin: auto;
+    border-radius: 20%;
+    background-color: rgba(0, 0, 0, 0);
+    color: rgba(255, 255, 255, 0.25);
+    text-align: center;
+
+    transition-property: width, height, font-size, background-color, color;
+    transition-duration: 0.4s;
+}
+
+.inner a {
+    color: inherit;
+    text-decoration: none;
+}
+
+.inner:hover {
+    width: 100%;
+    height: 100%;
+    font-size: 100%;
+    background-color: rgba(0, 0, 0, 0.2);
+    color: rgba(255, 255, 255, 0.75);
+}
+
+.logo {
+    width: 60%;
+    height: 60%;
+    padding-top: 8px;
+}

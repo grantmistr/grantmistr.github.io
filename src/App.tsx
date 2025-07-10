@@ -1,10 +1,12 @@
 import React from 'react';
 import logo from './logo.svg';
+import PortfolioButtons from './pages/home/portfolioButtons';
 import './App.css';
 
 function App() {
   return (
     <div className="App">
+      <PortfolioButtons />
       <header className="App-header">
         <img src={logo} className="App-logo" alt="logo" />
         <p>
