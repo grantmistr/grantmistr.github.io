@@ -1,11 +1,11 @@
-import * as ProgramInfo from "../../shader/programInfo.js";
-import { InitShaderProgram } from "../../shader/shaderLoader.js";
-import { gl, StartRender } from "../../shader/webGL.js";
+import { F_SPHERE_COUNT, F_SPHERE_DIRECTIONS } from "../../common/fibonacciSphere.js";
+import { InitWebGL } from "../../webGL/webGL.js";
 
 function Init(): void
 {
     UpdateHeaderButtonLogoViewBox();
     InitWebGL();
+    //InitFibonacciSphereElements();
 }
 
 function UpdateHeaderButtonLogoViewBox(): void
@@ -24,39 +24,31 @@ function UpdateHeaderButtonLogoViewBox(): void
     });
 }
 
-function InitWebGL(): void
+function InitFibonacciSphereElements(): void
 {
-    const webGLCanvas: HTMLCanvasElement | null = document.querySelector<HTMLCanvasElement>('#webGLCanvas');
-    //const webGLCanvas: HTMLCanvasElement = document.getElementById('#webGLCanvas') as HTMLCanvasElement;
-    
-    if (webGLCanvas === null)
-    {
-        console.log("Canvas Null");
-        return;
-    }
+    const container: HTMLElement | null = document.getElementById('container3D');
 
-    gl.Initialize(webGLCanvas);
-    StartRender();
-
-    LoadShaderProgram();
-}
-
-async function LoadShaderProgram(): Promise<void>
-{
-    if (gl.gl === null)
+    if (container === null)
     {
         return;
     }
 
-    const shaderProgram = await InitShaderProgram(gl.gl, './public/shaders/shader1/vertexProgram.vert', './public/shaders/shader1/fragmentProgram.frag');
+    const radius = 200;
 
-    if (shaderProgram === null)
+    for (let i = 0; i < F_SPHERE_COUNT; i++)
     {
-        return;
-    }
+        const [x, y, z] = F_SPHERE_DIRECTIONS[i];
+        const tx = x * radius;
+        const ty = y * radius;
+        const tz = z * radius;
 
-    const programInfo = new ProgramInfo.Shader2ProgramInfo(gl.gl, shaderProgram);
-    gl.programInfo = programInfo;
+        const element = document.createElement('div');
+        element.className = 'item3D';
+        element.textContent = i.toString();
+        element.style.transform = `translate3D(${tx}px, ${ty}px, ${tz}px)`;
+
+        container.appendChild(element);
+    }
 }
 
 Init();

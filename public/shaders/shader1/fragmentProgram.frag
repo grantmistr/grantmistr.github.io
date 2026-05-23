@@ -12,59 +12,7 @@ uniform vec2 uMouseClickPosition;
 
 out vec4 fragColor;
 
-float Random(float x)
-{
-    return fract(sin(x * 37.0) * 104003.9);
-}
-
-float Random(vec2 uv)
-{
-    return fract(sin(dot(uv, vec2(12.9898, 78.233))) * 43758.5453);
-}
-
-float Lerp(float a, float b, float t, float oneMinusT)
-{
-    return a * oneMinusT + b * t;
-}
-
-float Lerp(float a, float b, float t)
-{
-    return a * (1.0 - t) + b * t;
-}
-
-vec2 Lerp(vec2 a, vec2 b, float t)
-{
-    float oneMinusT = 1.0 - t;
-    return vec2(
-        Lerp(a.x, b.x, t, oneMinusT), 
-        Lerp(a.y, b.y, t, oneMinusT));
-}
-
-vec3 Lerp(vec3 a, vec3 b, float t)
-{
-    float oneMinusT = 1.0 - t;
-    return vec3(
-        Lerp(a.x, b.x, t, oneMinusT), 
-        Lerp(a.y, b.y, t, oneMinusT), 
-        Lerp(a.z, b.z, t, oneMinusT));
-}
-
-vec4 Lerp(vec4 a, vec4 b, float t)
-{
-    float oneMinusT = 1.0 - t;
-    return vec4(
-        Lerp(a.x, b.x, t, oneMinusT), 
-        Lerp(a.y, b.y, t, oneMinusT), 
-        Lerp(a.z, b.z, t, oneMinusT), 
-        Lerp(a.w, b.w, t, oneMinusT));
-}
-
-vec2 RotateVec2(vec2 v, float theta)
-{
-    float c = cos(theta);
-    float s = sin(theta);
-    return vec2(v.x * c - v.y * s, v.x * s + v.y * c);
-}
+#include "../include/helperFunctions.glsl"
 
 vec3 HueShift(vec3 color, float t)
 {
@@ -113,11 +61,11 @@ void main()
     float cellRand = 0.5 - Random(cell);
     vec2 tiledPos01 = vec2(fract(scaledPosNDC.x), fract(scaledPosNDC.y));
     vec2 tiledPosNDC = vec2(tiledPos01.x * 2.0 - 1.0, tiledPos01.y * 2.0 - 1.0);
-    vec2 tiledPosRot = RotateVec2(tiledPosNDC, uTime * 0.001 * cellRand + (cellRand * 6.28) + (mouseInfluence * 6.28 * (cellRand > 0.0 ? 1.0 : -1.0)));
+    vec2 tiledPosRot = RotateVec2(tiledPosNDC, uTime * 0.001 * cellRand + (cellRand * TAU) + (mouseInfluence * TAU * (cellRand > 0.0 ? 1.0 : -1.0)));
 
     vec2 c0 = vec2(
-        pow(max(1.0 - tiledPosRot.x * tiledPosRot.x, 0.0), 64.0),
-        pow(max(1.0 - tiledPosRot.y * tiledPosRot.y, 0.0), 64.0));
+        pow(max(1.0 - tiledPosRot.x * tiledPosRot.x, 0.0), 512.0 / scale),
+        pow(max(1.0 - tiledPosRot.y * tiledPosRot.y, 0.0), 512.0 / scale));
 
     float c = length(tiledPosRot * (1.2 - mouseInfluence * 0.25)); // circle size increase with mouse influence
     c *= c;
@@ -130,9 +78,9 @@ void main()
     float perPixelRandom = Random(pos01); // per-pixel random for dithering and stuff
 
     float t = c * 0.25 + c0.x * (0.25 + mouseInfluence * 0.75); // brighter color with mouse influence
-    vec3 color0 = Lerp(vec3(0.1, 0.1, 0.0), vec3(0.4, 0.2, 0.1), dot(posNDC, vec2(0.25, -0.25)) + perPixelRandom * 0.05);
+    vec3 color0 = mix(vec3(0.1, 0.1, 0.0), vec3(0.4, 0.2, 0.1), dot(posNDC, vec2(0.25, -0.25)) + perPixelRandom * 0.05);
     vec3 color1 = vColor;
-    vec3 color = Lerp(color0, color1, t * (0.25 + mouseInfluence * 0.05));
-
+    vec3 color = mix(color0, color1, t * (0.25 + mouseInfluence * 0.05));
+    
     fragColor = vec4(color.x, color.y, color.z, 1.0);
 }

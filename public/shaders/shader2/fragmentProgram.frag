@@ -12,59 +12,7 @@ uniform vec2 uMouseClickPosition;
 
 out vec4 fragColor;
 
-float Random(float x)
-{
-    return fract(sin(x * 37.0) * 104003.9);
-}
-
-float Random(vec2 uv)
-{
-    return fract(sin(dot(uv, vec2(12.9898, 78.233))) * 43758.5453);
-}
-
-float Lerp(float a, float b, float t, float oneMinusT)
-{
-    return a * oneMinusT + b * t;
-}
-
-float Lerp(float a, float b, float t)
-{
-    return a * (1.0 - t) + b * t;
-}
-
-vec2 Lerp(vec2 a, vec2 b, float t)
-{
-    float oneMinusT = 1.0 - t;
-    return vec2(
-        Lerp(a.x, b.x, t, oneMinusT), 
-        Lerp(a.y, b.y, t, oneMinusT));
-}
-
-vec3 Lerp(vec3 a, vec3 b, float t)
-{
-    float oneMinusT = 1.0 - t;
-    return vec3(
-        Lerp(a.x, b.x, t, oneMinusT), 
-        Lerp(a.y, b.y, t, oneMinusT), 
-        Lerp(a.z, b.z, t, oneMinusT));
-}
-
-vec4 Lerp(vec4 a, vec4 b, float t)
-{
-    float oneMinusT = 1.0 - t;
-    return vec4(
-        Lerp(a.x, b.x, t, oneMinusT), 
-        Lerp(a.y, b.y, t, oneMinusT), 
-        Lerp(a.z, b.z, t, oneMinusT), 
-        Lerp(a.w, b.w, t, oneMinusT));
-}
-
-vec2 RotateVec2(vec2 v, float theta)
-{
-    float c = cos(theta);
-    float s = sin(theta);
-    return vec2(v.x * c - v.y * s, v.x * s + v.y * c);
-}
+#include "../include/helperFunctions.glsl"
 
 vec3 HueShift(vec3 color, float t)
 {
@@ -412,7 +360,7 @@ void main()
 {
     float aspect = uScreenSize.x / uScreenSize.y;
 
-    float scale = 20.0;
+    float scale = 8.0;
     float slope = 2000.0;
     float interval = scale * 2.0;
 

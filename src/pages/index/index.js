@@ -1,9 +1,9 @@
-import * as ProgramInfo from "../../shader/programInfo.js";
-import { InitShaderProgram } from "../../shader/shaderLoader.js";
-import { gl, StartRender } from "../../shader/webGL.js";
+import { F_SPHERE_COUNT, F_SPHERE_DIRECTIONS } from "../../common/fibonacciSphere.js";
+import { InitWebGL } from "../../webGL/webGL.js";
 function Init() {
     UpdateHeaderButtonLogoViewBox();
     InitWebGL();
+    //InitFibonacciSphereElements();
 }
 function UpdateHeaderButtonLogoViewBox() {
     const headerButtonLogos = document.querySelectorAll('.headerButtonLogo');
@@ -15,26 +15,22 @@ function UpdateHeaderButtonLogoViewBox() {
         }
     });
 }
-function InitWebGL() {
-    const webGLCanvas = document.querySelector('#webGLCanvas');
-    //const webGLCanvas: HTMLCanvasElement = document.getElementById('#webGLCanvas') as HTMLCanvasElement;
-    if (webGLCanvas === null) {
-        console.log("Canvas Null");
+function InitFibonacciSphereElements() {
+    const container = document.getElementById('container3D');
+    if (container === null) {
         return;
     }
-    gl.Initialize(webGLCanvas);
-    StartRender();
-    LoadShaderProgram();
-}
-async function LoadShaderProgram() {
-    if (gl.gl === null) {
-        return;
+    const radius = 200;
+    for (let i = 0; i < F_SPHERE_COUNT; i++) {
+        const [x, y, z] = F_SPHERE_DIRECTIONS[i];
+        const tx = x * radius;
+        const ty = y * radius;
+        const tz = z * radius;
+        const element = document.createElement('div');
+        element.className = 'item3D';
+        element.textContent = i.toString();
+        element.style.transform = `translate3D(${tx}px, ${ty}px, ${tz}px)`;
+        container.appendChild(element);
     }
-    const shaderProgram = await InitShaderProgram(gl.gl, './public/shaders/shader1/vertexProgram.vert', './public/shaders/shader1/fragmentProgram.frag');
-    if (shaderProgram === null) {
-        return;
-    }
-    const programInfo = new ProgramInfo.Shader2ProgramInfo(gl.gl, shaderProgram);
-    gl.programInfo = programInfo;
 }
 Init();

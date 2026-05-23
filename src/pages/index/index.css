@@ -1,10 +1,15 @@
+* {
+    margin: 0;
+    padding: 0;
+}
+
 html {
     background-color: #222222;
 }
 
 body {
     color: #f1f1f1;
-    font-family: Verdana;
+    font-family: 'Roboto Mono', monospace;
     margin: 0;
     padding: 0;
 }
@@ -42,7 +47,7 @@ button:focus {
     position: absolute;
     min-height: 100vh;
     min-width: 100vw;
-    z-index: -998;
+    z-index: 1;
 }
 
 #webGLCanvas {
@@ -58,58 +63,67 @@ button:focus {
     flex-direction: column;
     justify-content: center;
     align-items: center;
+    z-index: -1;
 }
 
 #headerTitle {
-    font-size: 40px;
+    font-size: 3rem;
 }
 
 #headerButtons {
-    width: 500px;
+    height: 150px;
+    width: 400px;
     display: flex;
     flex-direction: row;
     justify-content: space-evenly;
-    padding-bottom: 20px;
+    font-size: 1rem;
 }
 
-.headerButtonWrapper {
-    width: 150px;
-    height: 150px;
+.headerButton {
+    height: 100%;
+    width: 30%;
     align-content: center;
-}
-
-.headerButtonInnerWrapper {
-    width: 80%;
-    height: 80%;
-    font-size: 80%;
-    font-style: italic;
-    margin: auto;
-    border-radius: 30px;
-    background-color: rgba(0, 0, 0, 0);
-    color: rgba(255, 255, 255, 0.25);
     text-align: center;
+    color: rgba(255, 255, 255, 0);
 
-    transition-property: width, height, font-size, background-color, color;
+    transition-property: color;
     transition-duration: 0.4s;
 }
 
-.headerButtonInnerWrapper a {
+.headerButton:hover {
+    color: rgba(255, 255, 255, 0.5);
+}
+
+.headerButton a {
     color: inherit;
     text-decoration: none;
 }
 
-.headerButtonInnerWrapper:hover {
-    width: 100%;
-    height: 100%;
-    font-size: 100%;
-    background-color: rgba(0, 0, 0, 0.2);
-    color: rgba(255, 255, 255, 0.75);
+.headerButtonLogoWrapper {
+    height: 70%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.headerButtonLogoWrapperInner {
+    transform: scale(0.6);
+
+    transition-property: transform;
+    transition-duration: 0.4s;
+}
+
+.headerButton:hover .headerButtonLogoWrapperInner {
+    transform: scale(0.7);
 }
 
 .headerButtonLogo {
-    width: 60%;
-    height: 60%;
-    padding-top: 8px;
+    height: 100%;
+    width: 100%;
+}
+
+.headerButtonTextWrapper {
+    font-style: italic;
 }
 
 #lineBreak {
@@ -144,4 +158,27 @@ button:focus {
 .contactInfoField span {
     font-style: italic;
     padding: 5px;
+}
+
+#fSphereElementsContainer {
+    position: absolute;
+    min-height: 100vh;
+    min-width: 100vw;
+    left: 0;
+    top: 0;
+    /* transform-style: preserve-3d; */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: transparent;
+    z-index: 2;
+}
+
+.fSphereElement {
+    position: absolute;
+    width: 100px;
+    height: 100px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
