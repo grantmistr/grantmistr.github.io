@@ -168,6 +168,13 @@ class PageManager {
             this.uniforms.mouseDelta = [e.movementX, -e.movementY];
             this.mouseDelta = this.uniforms.mouseDelta;
         };
+        window.ontouchmove = (e) => {
+            const rect = this.gl.canvas.getBoundingClientRect();
+            this.uniforms.mouseMoved = true;
+            this.uniforms.mousePosition = [e.touches[0].clientX - rect.left, e.touches[0].clientY - rect.top];
+            this.uniforms.mouseDelta = [this.uniforms.mouseClickPosition[0] - this.uniforms.mousePosition[0], -this.uniforms.mouseClickPosition[1] + this.uniforms.mousePosition[1]];
+            this.mouseDelta = this.uniforms.mouseDelta;
+        };
         window.onmousedown = (e) => {
             const rect = this.gl.canvas.getBoundingClientRect();
             this.uniforms.mouseDown = true;
@@ -175,7 +182,17 @@ class PageManager {
             this.uniforms.mouseClickTime = this.uniforms.time;
             this.uniforms.mouseDelta = [0.0, 0.0];
         };
+        window.ontouchstart = (e) => {
+            const rect = this.gl.canvas.getBoundingClientRect();
+            this.uniforms.mouseDown = true;
+            this.uniforms.mouseClickPosition = [e.touches[0].clientX - rect.left, e.touches[0].clientY - rect.top];
+            this.uniforms.mouseClickTime = this.uniforms.time;
+            this.uniforms.mouseDelta = [0.0, 0.0];
+        };
         window.onmouseup = (e) => {
+            this.uniforms.mouseDown = false;
+        };
+        window.ontouchend = (e) => {
             this.uniforms.mouseDown = false;
         };
         StartRender();

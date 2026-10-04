@@ -215,6 +215,16 @@ class PageManager
             this.mouseDelta = this.uniforms.mouseDelta;
         };
 
+        window.ontouchmove = (e: TouchEvent) =>
+        {
+            const rect = this.gl.canvas!.getBoundingClientRect();
+
+            this.uniforms.mouseMoved = true;
+            this.uniforms.mousePosition = [e.touches[0].clientX - rect.left, e.touches[0].clientY - rect.top];
+            this.uniforms.mouseDelta = [this.uniforms.mouseClickPosition[0] - this.uniforms.mousePosition[0], -this.uniforms.mouseClickPosition[1] + this.uniforms.mousePosition[1]];
+            this.mouseDelta = this.uniforms.mouseDelta;
+        };
+
         window.onmousedown = (e: MouseEvent) =>
         {
             const rect = this.gl.canvas!.getBoundingClientRect();
@@ -225,7 +235,22 @@ class PageManager
             this.uniforms.mouseDelta = [0.0, 0.0];
         };
 
+        window.ontouchstart = (e: TouchEvent) =>
+        {
+            const rect = this.gl.canvas!.getBoundingClientRect();
+
+            this.uniforms.mouseDown = true;
+            this.uniforms.mouseClickPosition = [e.touches[0].clientX - rect.left, e.touches[0].clientY - rect.top];
+            this.uniforms.mouseClickTime = this.uniforms.time;
+            this.uniforms.mouseDelta = [0.0, 0.0];
+        };
+
         window.onmouseup = (e: MouseEvent) =>
+        {
+            this.uniforms.mouseDown = false;
+        };
+
+        window.ontouchend = (e: TouchEvent) =>
         {
             this.uniforms.mouseDown = false;
         };
