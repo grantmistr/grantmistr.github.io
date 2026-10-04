@@ -2,6 +2,16 @@ import { Mat3 } from "./matrix3.js";
 
 export type Vec3 = [number, number, number];
 
+export function AnyComponentNonZero(v: Vec3): boolean
+{
+    return v[0] !== 0.0 || v[1] !== 0.0 || v[2] !== 0.0;
+}
+
+export function AllComponentZero(v: Vec3): boolean
+{
+    return !AnyComponentNonZero(v);
+}
+
 export function Add(a: Vec3, b: Vec3): Vec3
 {
     const o: Vec3 = [
@@ -22,6 +32,11 @@ export function Add3(a: Vec3, b: Vec3, c: Vec3): Vec3
     ];
 
     return o;
+}
+
+export function AddScalar(a: Vec3, b: number): Vec3
+{
+    return [a[0] + b, a[1] + b, a[2] + b];
 }
 
 export function Subtract(a: Vec3, b: Vec3): Vec3
@@ -96,4 +111,16 @@ export function MultiplyByMat3(m: Mat3, v: Vec3): Vec3
         m[1][0] * v[0] + m[1][1] * v[1] + m[1][2] * v[2],
         m[2][0] * v[0] + m[2][1] * v[1] + m[2][2] * v[2]
     ];
+}
+
+export function Slerp(a: Vec3, b: Vec3, t: number): Vec3
+{
+    const theta = Math.acos(Dot(a, b));
+    const s = Math.sin(theta);
+    return Add(MultiplyScalar(a, Math.sin((1.0 - t) * theta) / s), MultiplyScalar(b, Math.sin(t * theta) / s));
+}
+
+export function Negate(v: Vec3): Vec3
+{
+    return [-v[0], -v[1], -v[2]];
 }

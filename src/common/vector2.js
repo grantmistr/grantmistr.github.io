@@ -26,7 +26,7 @@ export function SafeNormalize(v) {
 export function Lerp(a, b, t) {
     const t_ = 1.0 - t;
     return [
-        a[0] * t + b[0] * t_,
-        a[1] * t + b[1] * t_
+        a[0] * t_ + b[0] * t,
+        a[1] * t_ + b[1] * t
     ];
 }

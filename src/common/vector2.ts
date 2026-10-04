@@ -44,7 +44,7 @@ export function Lerp(a: Vec2, b: Vec2, t: number): Vec2
 {
     const t_ = 1.0 - t;
     return [
-        a[0] * t + b[0] * t_,
-        a[1] * t + b[1] * t_
+        a[0] * t_ + b[0] * t,
+        a[1] * t_ + b[1] * t
     ];
 }

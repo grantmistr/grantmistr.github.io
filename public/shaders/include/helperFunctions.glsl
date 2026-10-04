@@ -96,6 +96,11 @@ float InverseLerp(float a, float b, float t)
     return (t - a) / (b - a);
 }
 
+float LengthSquared(vec2 v)
+{
+    return v.x * v.x + v.y * v.y;
+}
+
 float LengthSquared(vec3 v)
 {
     return v.x * v.x + v.y * v.y + v.z * v.z;
@@ -111,9 +116,9 @@ float Luminance(vec3 color)
     return 0.2126 * color.x + 0.7152 * color.y + 0.0722 * color.z;
 }
 
-vec3 TransformToViewSpace(mat4 invProjMatrix, mat3 invViewMatrix, vec2 posNDC)
+vec3 TransformToCameraRelativeWorldSpace(mat4 invProjMatrix, mat3 invViewMatrix, vec3 posNDC)
 {
-    vec4 t = vec4(posNDC.x, posNDC.y, -1.0, 1.0);
+    vec4 t = vec4(posNDC.x, posNDC.y, posNDC.z, 1.0);
 
     float x = invProjMatrix[0][0] * t[0];
     float y = invProjMatrix[1][1] * t[1];

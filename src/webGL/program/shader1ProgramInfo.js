@@ -5,7 +5,7 @@ export class Shader1ProgramInfo extends ProgramInfo {
     aLoc;
     uLoc;
     constructor(gl, program) {
-        super(program);
+        super(gl, program);
         this.aLoc =
             {
                 vertexID: gl.getAttribLocation(program, 'inVertexID')

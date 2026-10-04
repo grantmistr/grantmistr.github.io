@@ -1,3 +1,9 @@
+export function AnyComponentNonZero(v) {
+    return v[0] !== 0.0 || v[1] !== 0.0 || v[2] !== 0.0;
+}
+export function AllComponentZero(v) {
+    return !AnyComponentNonZero(v);
+}
 export function Add(a, b) {
     const o = [
         a[0] + b[0],
@@ -13,6 +19,9 @@ export function Add3(a, b, c) {
         a[2] + b[2] + c[2]
     ];
     return o;
+}
+export function AddScalar(a, b) {
+    return [a[0] + b, a[1] + b, a[2] + b];
 }
 export function Subtract(a, b) {
     const o = [
@@ -65,4 +74,12 @@ export function MultiplyByMat3(m, v) {
         m[1][0] * v[0] + m[1][1] * v[1] + m[1][2] * v[2],
         m[2][0] * v[0] + m[2][1] * v[1] + m[2][2] * v[2]
     ];
+}
+export function Slerp(a, b, t) {
+    const theta = Math.acos(Dot(a, b));
+    const s = Math.sin(theta);
+    return Add(MultiplyScalar(a, Math.sin((1.0 - t) * theta) / s), MultiplyScalar(b, Math.sin(t * theta) / s));
+}
+export function Negate(v) {
+    return [-v[0], -v[1], -v[2]];
 }

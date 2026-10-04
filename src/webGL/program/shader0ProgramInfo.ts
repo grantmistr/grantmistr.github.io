@@ -1,4 +1,4 @@
-import { Uniforms } from "../webGL.js";
+import { Uniforms } from "../../pageManager/pageManager.js";
 import { ProgramInfo } from "./programInfo.js";
 
 export class Shader0ProgramInfo extends ProgramInfo
@@ -19,7 +19,7 @@ export class Shader0ProgramInfo extends ProgramInfo
 
     public constructor(gl: WebGL2RenderingContext, program: WebGLProgram)
     {
-        super(program);
+        super(gl, program);
 
         this.aLoc =
         {

@@ -1,3 +1,5 @@
+import { SceneConstants } from "../webGL/constants.js";
+import * as Vec3 from "./vector3.js";
 export const IDENTITY = [[1.0, 0.0, 0.0], [0.0, 1.0, 0.0], [0.0, 0.0, 1.0]];
 export function Transpose(m) {
     return [
@@ -29,12 +31,23 @@ export function RotationMatrixFromAxisAndAngle(a, theta) {
     const c = Math.cos(theta);
     const s = Math.sin(theta);
     const t = 1.0 - c;
+    // const o: Mat3 =
+    // [
+    //     [a[0] * a[0] * t + c, a[0] * a[1] * t - a[2] * s, a[0] * a[2] * t + a[1] * s],
+    //     [a[0] * a[1] * t + a[2] * s, a[1] * a[1] * t + c, a[1] * a[2] * t - a[0] * s],
+    //     [a[0] * a[2] * t - a[1] * s, a[1] * a[2] * t + a[0] * s, a[2] * a[2] * t + c]
+    // ];
     const o = [
-        [a[0] * a[0] * t + c, a[0] * a[1] * t - a[2] * s, a[0] * a[2] * t + a[1] * s],
-        [a[0] * a[1] * t + a[2] * s, a[1] * a[1] * t + c, a[1] * a[2] * t - a[0] * s],
-        [a[0] * a[2] * t - a[1] * s, a[1] * a[2] * t + a[0] * s, a[2] * a[2] * t + c]
+        [a[0] * a[0] * t + c, a[0] * a[1] * t + a[2] * s, a[0] * a[2] * t - a[1] * s],
+        [a[0] * a[1] * t - a[2] * s, a[1] * a[1] * t + c, a[1] * a[2] * t + a[0] * s],
+        [a[0] * a[2] * t + a[1] * s, a[1] * a[2] * t - a[0] * s, a[2] * a[2] * t + c]
     ];
     return o;
+}
+export function RotationMatrixFromForward(f) {
+    const r = Vec3.Normalize(Vec3.CrossProduct(f, SceneConstants.UP));
+    const u = Vec3.Normalize(Vec3.CrossProduct(r, f));
+    return [r, u, f];
 }
 export function ToFloat32List(m) {
     return [m[0][0], m[0][1], m[0][2], m[1][0], m[1][1], m[1][2], m[2][0], m[2][1], m[2][2]];

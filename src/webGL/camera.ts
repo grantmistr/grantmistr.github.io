@@ -79,13 +79,9 @@ export class Camera
 
     public Update()
     {
-        const f = Vec3.Normalize(Vec3.Subtract(this.target, this.position));
-        const r = Vec3.Normalize(Vec3.CrossProduct(f, SceneConstants.UP));
-        const u = Vec3.Normalize(Vec3.CrossProduct(r, f));
-
-        //this.view = [r, u, f];
-        //this.view = Mat3.Transpose(this.view);
-        this.view = [r, u, [-f[0], -f[1], -f[2]]];
+        let f = Vec3.Normalize(Vec3.Subtract(this.target, this.position));
+        f = Vec3.Negate(f); // flip bc webgl is -z forward default
+        this.view = Mat3.RotationMatrixFromForward(f);
         this.invView = Mat3.Transpose(this.view);
     }
 
@@ -96,19 +92,28 @@ export class Camera
 
     public CalculatePositionOnNearClipPlane(positionNDC: Vec2.Vec2): Vec3.Vec3
     {
-        const t = this.TransformByInverseProjectionMatrix([positionNDC[0], positionNDC[1], -1.0, 1.0]);
-        let v: Vec3.Vec3 = [t[0] / t[3], t[1] / t[3], t[2] / t[3]];
-        v = Vec3.MultiplyByMat3(this.invView, v);
-        v = Vec3.Add(v, this.position);
-        return v;
+        const v = this.TransformFromClipToCameraRelativeWorldSpace([positionNDC[0], positionNDC[1], SceneConstants.NEAR_CLIP_VALUE]);
+        return Vec3.Add(v, this.position);
         //return Vec3.Add3(Vec3.MultiplyScalar(this.forward, this.near), Vec3.MultiplyScalar(this.right, positionNDCAspect[0] * this.FOV), Vec3.MultiplyScalar(this.up, positionNDCAspect[1] * this.FOV));
     }
 
-    public TransformToViewSpace(positionNDC: Vec2.Vec2): Vec3.Vec3
+    public TransformFromClipToCameraRelativeWorldSpace(positionNDC: Vec3.Vec3): Vec3.Vec3
     {
-        const t = this.TransformByInverseProjectionMatrix([positionNDC[0], positionNDC[1], -1.0, 1.0]);
-        let v: Vec3.Vec3 = [t[0] / t[3], t[1] / t[3], t[2] / t[3]];
-        v = Vec3.MultiplyByMat3(this.invView, v);
-        return v;
+        const t = this.TransformByInverseProjectionMatrix([positionNDC[0], positionNDC[1], positionNDC[2], 1.0]);
+        const v: Vec3.Vec3 = [t[0] / t[3], t[1] / t[3], t[2] / t[3]];
+        return Vec3.MultiplyByMat3(this.invView, v);
+    }
+
+    public TransformFromWorldToClipSpace(position: Vec3.Vec3): Vec3.Vec3
+    {
+        position = Vec3.Subtract(position, this.position);
+        position = Vec3.MultiplyByMat3(this.view, position);
+        const t = this.TransformByProjectionMatrix([position[0], position[1], position[2], 1.0]);
+        return [t[0] / t[3], t[1] / t[3], t[2] / t[3]];
+    }
+
+    public TransformByViewMatrix(position: Vec3.Vec3): Vec3.Vec3
+    {
+        return Vec3.MultiplyByMat3(this.view, position);
     }
 }

@@ -10,7 +10,7 @@ precision highp float;
 
 const int RAYMARCH_ITERATIONS = 24;
 const int F_SPHERE_COUNT = 8;
-const vec3 MAIN_SPHERE_POSITION = vec3(0.0, 0.0, 15.0);
+const vec3 MAIN_SPHERE_POSITION = vec3(0.0, 0.0, 0.0);
 const float MAIN_SPHERE_RADIUS = 4.0;
 const float F_SPHERE_RADIUS = 0.8;
 const float MOUSE_INFLUENCE_RADIUS_MULTIPLIER = 0.3;
@@ -20,6 +20,10 @@ const float CAMERA_FOV = 60.0 * (PI / 180.0);
 const float LIGHT_BEAM_FALLOFF_DISTANCE = CAMERA_DISTANCE * 0.5;
 const float LIGHT_BEAM_FALLOFF_DISTANCE_INV = 1.0 / LIGHT_BEAM_FALLOFF_DISTANCE;
 const float PARTICLE_SPEED = 0.0006;
+const float PARTICLES_X = 200.0;
+const float PARTICLES_X_INV = 1.0 / PARTICLES_X;
+const float PARTICLES_Y = 4.0;
+const float PARTICLES_Y_INV = 1.0 / PARTICLES_Y;
 
 const vec3[] F_SPHERE_DIRECTIONS = vec3[F_SPHERE_COUNT] // fibonacci lattice
 (
@@ -50,7 +54,7 @@ const vec3[] CYLINDER_COLORS = vec3[F_SPHERE_COUNT] // all equal luminance
 uniform float uTime;
 uniform vec2 uScreenSize;
 uniform vec2 uMousePosition;
-uniform mat3 uSphereRotationMatrix; 
+uniform mat3 uSphereRotationMatrix;
 uniform vec4 uFSphereDirections[F_SPHERE_COUNT]; // F_SPHERE_DIRECTIONS rotated by the uSphereRotationMatrix; w component has mouse influence
 uniform mat4 uInvProjMatrix;
 uniform mat3 uInvViewMatrix;
@@ -166,25 +170,19 @@ vec4 CalculateLightBeam(vec3 startPosition, float depthSqr, vec3 cylinderPos, ve
     vec3 W = cross(cylinderDir, U);
     float theta = atan(dot(V, W), dot(V, U));
 
-    const float particlesX = 200.0;
-    const float particlesXInv = 1.0 / particlesX;
-
-    const float particlesY = 4.0;
-    const float particlesYInv = 1.0 / particlesY;
-
     float xIndex = (theta + PI) / TAU;
-    xIndex = xIndex * particlesX;
+    xIndex = xIndex * PARTICLES_X;
     float xCoord = fract(xIndex);
-    xIndex = floor(xIndex) * particlesXInv;
+    xIndex = floor(xIndex) * PARTICLES_X_INV;
 
     float randomYOffset = Random(xIndex);
 
     float yIndex = 1.0 - Clamp01(lengthFalloff * LIGHT_BEAM_FALLOFF_DISTANCE_INV);
     yIndex *= yIndex;
     yIndex *= yIndex;
-    yIndex = (yIndex + randomYOffset + uTime * PARTICLE_SPEED) * particlesY;
+    yIndex = (yIndex + randomYOffset + uTime * PARTICLE_SPEED) * PARTICLES_Y;
     float yCoord = fract(yIndex);
-    yIndex = floor(yIndex) * particlesYInv;
+    yIndex = floor(yIndex) * PARTICLES_Y_INV;
 
     vec2 cell = vec2(xIndex, yIndex);
     float cellRandom = Random(cell);
@@ -232,9 +230,10 @@ vec4 CalculateLightBeams(vec3 startPosition, vec3 rayMarchPosition, vec3 viewDir
         vec3 cylinderPos = MAIN_SPHERE_POSITION + uFSphereDirections[i].xyz * MAIN_SPHERE_RADIUS;
         vec3 cylinderDir = uFSphereDirections[i].xyz;
         float mouseInfluenceWeight = uFSphereDirections[i].w;
+        float cylinderRadius = 0.5 + mouseInfluenceWeight * MOUSE_INFLUENCE_RADIUS_MULTIPLIER;
 
         float tNear, tFar;
-        bool valid = RayInfiniteCylinderIntersect(startPosition, viewDirection, cylinderPos, cylinderDir, 0.5 + mouseInfluenceWeight * MOUSE_INFLUENCE_RADIUS_MULTIPLIER, tNear, tFar);
+        bool valid = RayInfiniteCylinderIntersect(startPosition, viewDirection, cylinderPos, cylinderDir, cylinderRadius, tNear, tFar);
         vec3 hitNear = startPosition + viewDirection * tNear;
         bool capCheck = dot(hitNear - cylinderPos, cylinderDir) >= 0.0;
         valid = valid && capCheck;
@@ -247,7 +246,7 @@ vec4 CalculateLightBeams(vec3 startPosition, vec3 rayMarchPosition, vec3 viewDir
     }
 
     o.xyz = 1.0 - 1.0 / (o.xyz + 1.0);
-    o.xyz *= 1.0;
+    o.xyz *= 0.75;
 
     return o;
 }
@@ -347,6 +346,30 @@ vec3 Lighting(vec3 position, vec3 normal)
     return accumulatedDiffuse;
 }
 
+vec3 Background(vec2 posNDC, vec2 posNDCAspect, float geoMask, float dither)
+{
+    vec2 baseCoord = RotateVec2(posNDC, uTime * 0.0001);
+
+    vec2 c0 = vec2(baseCoord.x - 0.2, baseCoord.y + 2.5);
+    c0 = vec2(atan(c0.x, c0.y), LengthSquared(c0));
+    vec2 v0 = RotateVec2(c0, uTime * 0.000018);
+    float t0 = sin(atan(v0.x, v0.y) * 17.0);
+
+    vec2 c1 = vec2(baseCoord.x - 1.0, -baseCoord.y + 2.5);
+    c1 = vec2(atan(c1.x, c1.y), LengthSquared(c1));
+    vec2 v1 = RotateVec2(c1, uTime * -0.000033);
+    float t1 = sin(atan(v1.x, v1.y) * 23.0);
+
+    geoMask = 1.0 - geoMask;
+
+    float mask = LengthSquared(posNDCAspect);
+    mask = geoMask;
+
+    float o = 1.0 / (t0 * t1 + 2.0) * 0.05;
+
+    return vec3(1.0, 0.0, 1.0) * Clamp01(o * mask - dither * 0.02);
+}
+
 // TODO : should be done CPU side and passed in as buffer or uniforms
 void CalculateMouseInfluenceWeights(Camera camera, out float mouseInfluenceWeights[F_SPHERE_COUNT])
 {
@@ -380,45 +403,35 @@ void main()
 {
     float aspect = uScreenSize.x / uScreenSize.y;
     float dither = InterleavedGradientNoise(vec2(gl_FragCoord.x, gl_FragCoord.y));
-    
-    vec3 camPos = vec3(0.0, 0.0, -CAMERA_DISTANCE);
-    camPos = vec3(sin(uTime * 0.0001) * 12.0, 0.0, cos(uTime * 0.0001) * 12.0);
-    camPos = uCameraPosition;
-    //camPos.z += (sin(uTime * 0.001) + 1.0) * CAMERA_DISTANCE * 0.5;
-
-    // Camera camera;
-    // InitializeCamera(0.2, 100.0, CAMERA_FOV, aspect, camPos, MAIN_SPHERE_POSITION, camera);
-
-    // CoordData coordData;
-    // InitializeCoordData(vec2(gl_FragCoord.x, gl_FragCoord.y), uScreenSize, coordData);
 
     vec2 pos01 = vec2(gl_FragCoord.x / uScreenSize.x, gl_FragCoord.y / uScreenSize.y);
-    vec2 posNDC = vec2(pos01.x * 2.0 - 1.0, pos01.y * 2.0 - 1.0);
+    vec3 posNDC = vec3(pos01.x * 2.0 - 1.0, pos01.y * 2.0 - 1.0, -1.0);
     vec2 posNDCAspect = vec2(posNDC.x * aspect, posNDC.y);
-    vec3 nearClipPos = TransformToViewSpace(uInvProjMatrix, uInvViewMatrix, posNDC);
-    nearClipPos.z = -nearClipPos.z;
+    vec3 nearClipPos = TransformToCameraRelativeWorldSpace(uInvProjMatrix, uInvViewMatrix, posNDC);
     vec3 viewDirection = normalize(nearClipPos);
-    nearClipPos += camPos;
+    nearClipPos += uCameraPosition;
 
     float holeMask, geoMask;
     vec3 position, normal;
     float d = RayMarch(nearClipPos, viewDirection, position, normal, holeMask, geoMask);
-    
+
     vec4 lightBeams = CalculateLightBeams(nearClipPos, position, viewDirection);
-    //lightBeams.xyz *= 0.8 + dither * 0.2 * (1.0 - lightBeams.xyz);
-    //lightBeams.xyz *= 1.0 - (dither + 1.0) * (1.0 - lightBeams.w * lightBeams.w * (3.0 - 2.0 * lightBeams.w)) * 0.1;
     float lightBeamDither = max(1.0 - 2.0 * lightBeams.w * lightBeams.w, 0.0);
     lightBeamDither *= lightBeamDither * 0.3;
     lightBeamDither = 1.0 - lightBeamDither * dither;
     lightBeams.xyz *= lightBeamDither;
 
-    float cameraDistanceMask = length(camPos) - MAIN_SPHERE_RADIUS;
+    float cameraDistanceMask = length(uCameraPosition) - MAIN_SPHERE_RADIUS;
     holeMask = Clamp01(holeMask * (1.0 - Clamp01(cameraDistanceMask * CAMERA_DISTANCE_INV)) * 8.0);
     float alpha = (1.0 - holeMask) * Clamp01(cameraDistanceMask);
 
     vec3 lighting = Lighting(position, normal);
     lighting = (lighting + (dither - 0.5) * 0.02) * geoMask * alpha;
-    vec3 color = lighting + lightBeams.xyz;
+    //lighting *= (geoMask < 0.9999 ? 0.333 : 0.0) + 1.0; // glossy effect
+
+    vec3 background = Background(posNDC.xy, posNDCAspect, geoMask, dither);
+
+    vec3 color = lighting + lightBeams.xyz + background;
 
     //fragColor = vec4(r, g, b, 1.0);
     //fragColor = vec4(1.0 - Clamp01(d), 0.1, 0.1, 1.0);
@@ -426,8 +439,10 @@ void main()
     //fragColor = vec4(1.0 - d, 0.0, 0.0, 1.0);
     //fragColor = vec4(N.x, N.y, N.z, 1.0);
     fragColor = vec4(color * alpha, alpha);
+    //fragColor = vec4(color, 1.0);
+    //fragColor = vec4(alpha, 0.0, 0.0, 1.0);
     //fragColor = vec4(dither, 0.0, 0.0, 1.0);
-    //fragColor = vec4(holeMask, shade, 0.0, 1.0);
+    //fragColor = vec4(holeMask, 0.0, 0.0, 1.0);
     //fragColor = vec4(1.0 / (length(position) + 1.0) * 4.0 * a, 0.0, 0.0, a);
     //fragColor = vec4(position.x, position.y, position.z, 1.0);
     //fragColor = vec4(camera.nearClipPos.x, camera.nearClipPos.y, camera.nearClipPos.z, 1.0);
@@ -437,5 +452,6 @@ void main()
     //fragColor = vec4(vec3(lightBeamDither), 1.0);
     //fragColor = vec4(nearClipPos, 1.0);
     //fragColor = vec4(position, 1.0);
-    fragColor = vec4(viewDirection * (1.0 - geoMask), 1.0);
+    //fragColor = vec4(viewDirection * (1.0 - geoMask), 1.0);
+    //fragColor = vec4(d * d * d, 0.0, 0.0, 1.0);
 }

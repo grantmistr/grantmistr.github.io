@@ -1,4 +1,27 @@
-export async function InitShaderProgram(gl: WebGL2RenderingContext, vertexShaderPath: string, fragmentShaderPath: string): Promise<WebGLProgram | null>
+import { ProgramInfo } from "./program/programInfo.js";
+
+export async function LoadShaderProgram<T extends ProgramInfo>(
+    vertexProgramPath: string, fragmentProgramPath: string, gl: WebGL2RenderingContext,
+    programType: new (gl: WebGL2RenderingContext, program: WebGLProgram) => T): Promise<T | null>
+{
+    if (gl === null)
+    {
+        return null;
+    }
+
+    const shaderProgram = await InitShaderProgram(gl, vertexProgramPath, fragmentProgramPath);
+
+    if (shaderProgram === null)
+    {
+        return null;
+    }
+
+    const programInfo = new programType(gl, shaderProgram);
+
+    return programInfo;
+}
+
+async function InitShaderProgram(gl: WebGL2RenderingContext, vertexShaderPath: string, fragmentShaderPath: string): Promise<WebGLProgram | null>
 {
     const vertexShaderPromise = LoadShader(gl, gl.VERTEX_SHADER, vertexShaderPath);
     const fragmentShaderPromise = LoadShader(gl, gl.FRAGMENT_SHADER, fragmentShaderPath);

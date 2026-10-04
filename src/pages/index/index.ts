@@ -1,54 +1,8 @@
-import { F_SPHERE_COUNT, F_SPHERE_DIRECTIONS } from "../../common/fibonacciSphere.js";
-import { InitWebGL } from "../../webGL/webGL.js";
+import { pageManager } from "../../pageManager/pageManager.js";
 
 function Init(): void
 {
-    UpdateHeaderButtonLogoViewBox();
-    InitWebGL();
-    //InitFibonacciSphereElements();
-}
-
-function UpdateHeaderButtonLogoViewBox(): void
-{
-    const headerButtonLogos: NodeListOf<SVGElement> = document.querySelectorAll<SVGElement>('.headerButtonLogo');
-
-    headerButtonLogos.forEach((headerButtonLogo) =>
-    {
-        let path: SVGPathElement | null = headerButtonLogo.querySelector<SVGPathElement>('path');
-
-        if (path != null)
-        {
-            let rect: DOMRect = path.getBBox();
-            headerButtonLogo.setAttribute('viewBox', rect.x + ' ' + rect.y + ' ' + rect.width + ' ' + rect.height);
-        }
-    });
-}
-
-function InitFibonacciSphereElements(): void
-{
-    const container: HTMLElement | null = document.getElementById('container3D');
-
-    if (container === null)
-    {
-        return;
-    }
-
-    const radius = 200;
-
-    for (let i = 0; i < F_SPHERE_COUNT; i++)
-    {
-        const [x, y, z] = F_SPHERE_DIRECTIONS[i];
-        const tx = x * radius;
-        const ty = y * radius;
-        const tz = z * radius;
-
-        const element = document.createElement('div');
-        element.className = 'item3D';
-        element.textContent = i.toString();
-        element.style.transform = `translate3D(${tx}px, ${ty}px, ${tz}px)`;
-
-        container.appendChild(element);
-    }
+    pageManager.Initialize();
 }
 
 Init();

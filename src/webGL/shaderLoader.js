@@ -1,4 +1,15 @@
-export async function InitShaderProgram(gl, vertexShaderPath, fragmentShaderPath) {
+export async function LoadShaderProgram(vertexProgramPath, fragmentProgramPath, gl, programType) {
+    if (gl === null) {
+        return null;
+    }
+    const shaderProgram = await InitShaderProgram(gl, vertexProgramPath, fragmentProgramPath);
+    if (shaderProgram === null) {
+        return null;
+    }
+    const programInfo = new programType(gl, shaderProgram);
+    return programInfo;
+}
+async function InitShaderProgram(gl, vertexShaderPath, fragmentShaderPath) {
     const vertexShaderPromise = LoadShader(gl, gl.VERTEX_SHADER, vertexShaderPath);
     const fragmentShaderPromise = LoadShader(gl, gl.FRAGMENT_SHADER, fragmentShaderPath);
     const [vertexShader, fragmentShader] = await Promise.all([vertexShaderPromise, fragmentShaderPromise]);
