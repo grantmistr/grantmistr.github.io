@@ -4,3 +4,5 @@
 *.sln
 
 /tsconfig
+
+node_modules/
