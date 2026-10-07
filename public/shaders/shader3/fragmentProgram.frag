@@ -454,5 +454,4 @@ void main()
     //fragColor = vec4(position, 1.0);
     //fragColor = vec4(viewDirection * (1.0 - geoMask), 1.0);
     //fragColor = vec4(d * d * d, 0.0, 0.0, 1.0);
-    fragColor = vec4(pos01, 0.0, 0.5);
 }
