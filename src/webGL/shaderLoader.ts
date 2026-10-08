@@ -112,9 +112,9 @@ async function InjectIncludes(shaderText: string, path: string): Promise<string>
     // stuff in quotes in first group (relative file path)
     const includeMatches = Array.from(shaderText.matchAll(regex));
 
-    console.log(Array.isArray(includeMatches));
-    console.log(typeof includeMatches.forEach);
-    console.log(typeof shaderText.matchAll);
+    // console.log(Array.isArray(includeMatches));
+    // console.log(typeof includeMatches.forEach);
+    // console.log(typeof shaderText.matchAll);
 
     includeMatches.forEach((includeMatch, index) =>
     {
