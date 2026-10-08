@@ -173,20 +173,22 @@ class PageManager
 
     public Initialize(): void
     {
-        this.uniforms.screenSize = [window.innerWidth, window.innerHeight];
-        this.uniforms.aspectRatio = window.innerWidth / window.innerHeight;
-        this.camera.UpdateProjectionMatrix(this.uniforms.aspectRatio);
-        this.camera.Update();
-
-        this.gl.Initialize();
-        this.InitFSphereDirArray();
-        this.InitPageInfos();
-        this.InitHTMLElements(this.uniforms, this.camera);
-        this.LoadShaderProgram();
-
         window.onload = (e: Event) =>
         {
+            this.uniforms.screenSize = [window.innerWidth, window.innerHeight];
+            this.uniforms.aspectRatio = window.innerWidth / window.innerHeight;
+            this.camera.UpdateProjectionMatrix(this.uniforms.aspectRatio);
+            this.camera.Update();
+
+            this.gl.Initialize();
+            this.InitFSphereDirArray();
+            this.InitPageInfos();
+            this.InitHTMLElements(this.uniforms, this.camera);
+            this.LoadShaderProgram();
+
             this.SetInitialPageState(location.hash);
+
+            StartRender();
         };
 
         window.onhashchange = (e: HashChangeEvent) =>
@@ -220,8 +222,9 @@ class PageManager
             const rect = this.gl.canvas!.getBoundingClientRect();
 
             this.uniforms.mouseMoved = true;
+            const prevMousePos = this.uniforms.mousePosition;
             this.uniforms.mousePosition = [e.touches[0].clientX - rect.left, e.touches[0].clientY - rect.top];
-            this.uniforms.mouseDelta = [this.uniforms.mousePosition[0] - this.uniforms.mouseClickPosition[0], -this.uniforms.mousePosition[1] + this.uniforms.mouseClickPosition[1]];
+            this.uniforms.mouseDelta = [this.uniforms.mousePosition[0] - prevMousePos[0], -this.uniforms.mousePosition[1] + prevMousePos[1]];
             this.mouseDelta = this.uniforms.mouseDelta;
         };
 
@@ -254,8 +257,6 @@ class PageManager
         {
             this.uniforms.mouseDown = false;
         };
-
-        StartRender();
     }
 
     private async LoadShaderProgram(): Promise<void>

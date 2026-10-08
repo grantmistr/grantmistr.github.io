@@ -137,17 +137,18 @@ class PageManager {
     constructor() {
     }
     Initialize() {
-        this.uniforms.screenSize = [window.innerWidth, window.innerHeight];
-        this.uniforms.aspectRatio = window.innerWidth / window.innerHeight;
-        this.camera.UpdateProjectionMatrix(this.uniforms.aspectRatio);
-        this.camera.Update();
-        this.gl.Initialize();
-        this.InitFSphereDirArray();
-        this.InitPageInfos();
-        this.InitHTMLElements(this.uniforms, this.camera);
-        this.LoadShaderProgram();
         window.onload = (e) => {
+            this.uniforms.screenSize = [window.innerWidth, window.innerHeight];
+            this.uniforms.aspectRatio = window.innerWidth / window.innerHeight;
+            this.camera.UpdateProjectionMatrix(this.uniforms.aspectRatio);
+            this.camera.Update();
+            this.gl.Initialize();
+            this.InitFSphereDirArray();
+            this.InitPageInfos();
+            this.InitHTMLElements(this.uniforms, this.camera);
+            this.LoadShaderProgram();
             this.SetInitialPageState(location.hash);
+            StartRender();
         };
         window.onhashchange = (e) => {
             this.UpdatePageIndices(location.hash, e.oldURL);
@@ -171,8 +172,9 @@ class PageManager {
         window.ontouchmove = (e) => {
             const rect = this.gl.canvas.getBoundingClientRect();
             this.uniforms.mouseMoved = true;
+            const prevMousePos = this.uniforms.mousePosition;
             this.uniforms.mousePosition = [e.touches[0].clientX - rect.left, e.touches[0].clientY - rect.top];
-            this.uniforms.mouseDelta = [this.uniforms.mousePosition[0] - this.uniforms.mouseClickPosition[0], -this.uniforms.mousePosition[1] + this.uniforms.mouseClickPosition[1]];
+            this.uniforms.mouseDelta = [this.uniforms.mousePosition[0] - prevMousePos[0], -this.uniforms.mousePosition[1] + prevMousePos[1]];
             this.mouseDelta = this.uniforms.mouseDelta;
         };
         window.onmousedown = (e) => {
@@ -195,7 +197,6 @@ class PageManager {
         window.ontouchend = (e) => {
             this.uniforms.mouseDown = false;
         };
-        StartRender();
     }
     async LoadShaderProgram() {
         this.programInfo = await LoadShaderProgram('./public/shaders/shader3/vertexProgram.vert', './public/shaders/shader3/fragmentProgram.frag', this.gl.gl, Shader3ProgramInfo);
