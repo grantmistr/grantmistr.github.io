@@ -8,6 +8,8 @@ html {
 }
 
 body {
+    position: fixed;
+    width: 100%;
     color: white;
     font-family: Courier, monospace;
 }
