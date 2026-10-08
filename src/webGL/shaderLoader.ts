@@ -110,7 +110,7 @@ async function InjectIncludes(shaderText: string, path: string): Promise<string>
 
     // find all lines in the shader with #include "..."
     // stuff in quotes in first group (relative file path)
-    const includeMatches = shaderText.matchAll(regex);
+    const includeMatches = Array.from(shaderText.matchAll(regex));
     includeMatches.forEach((includeMatch, index) =>
     {
         const fullMatch = includeMatch[0].valueOf();
