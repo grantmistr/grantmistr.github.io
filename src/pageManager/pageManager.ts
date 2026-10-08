@@ -225,9 +225,9 @@ class PageManager
             const rect = this.gl.canvas!.getBoundingClientRect();
 
             this.uniforms.mouseMoved = true;
-            const prevMousePos = this.uniforms.mousePosition;
+            this.uniforms.mouseClickPosition = this.uniforms.mousePosition;
             this.uniforms.mousePosition = [e.touches[0].clientX - rect.left, e.touches[0].clientY - rect.top];
-            this.uniforms.mouseDelta = [this.uniforms.mousePosition[0] - prevMousePos[0], -this.uniforms.mousePosition[1] + prevMousePos[1]];
+            this.uniforms.mouseDelta = [this.uniforms.mousePosition[0] - this.uniforms.mouseClickPosition[0], -this.uniforms.mousePosition[1] + this.uniforms.mouseClickPosition[1]];
             this.mouseDelta = this.uniforms.mouseDelta;
         };
 
