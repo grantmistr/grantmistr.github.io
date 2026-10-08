@@ -219,6 +219,8 @@ class PageManager
 
         window.ontouchmove = (e: TouchEvent) =>
         {
+            e.preventDefault();
+
             const rect = this.gl.canvas!.getBoundingClientRect();
 
             this.uniforms.mouseMoved = true;

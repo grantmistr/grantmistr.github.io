@@ -170,6 +170,7 @@ class PageManager {
             this.mouseDelta = this.uniforms.mouseDelta;
         };
         window.ontouchmove = (e) => {
+            e.preventDefault();
             const rect = this.gl.canvas.getBoundingClientRect();
             this.uniforms.mouseMoved = true;
             const prevMousePos = this.uniforms.mousePosition;
