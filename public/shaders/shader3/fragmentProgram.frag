@@ -360,14 +360,9 @@ vec3 Background(vec2 posNDC, vec2 posNDCAspect, float geoMask, float dither)
     vec2 v1 = RotateVec2(c1, uTime * -0.000033);
     float t1 = sin(atan(v1.x, v1.y) * 23.0);
 
-    geoMask = 1.0 - geoMask;
+    float o = 1.0 / (t0 * t1 + 2.0) * 0.07;
 
-    float mask = LengthSquared(posNDCAspect);
-    mask = geoMask;
-
-    float o = 1.0 / (t0 * t1 + 2.0) * 0.05;
-
-    return vec3(1.0, 0.0, 1.0) * Clamp01(o * mask - dither * 0.02);
+    return vec3(1.0, 0.0, 1.0) * Clamp01(o * (1.0 - geoMask) - dither * 0.02);
 }
 
 // TODO : should be done CPU side and passed in as buffer or uniforms

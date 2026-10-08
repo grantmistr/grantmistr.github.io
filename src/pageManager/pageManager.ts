@@ -120,7 +120,8 @@ class PageManager
         DEFAULT_CAMERA_POSITION: [0.0, 0.0, -12.0] as Vec3.Vec3,
         CAMERA_ZOOM_TIME: 2000.0,
         CAMERA_ACCELERATION: 0.01,
-        PAGE_INFO_FADE_SPEED: 0.001
+        PAGE_INFO_FADE_SPEED: 0.001,
+        BUTTON_DOT_ACTIVE_THRESHOLD: 0.2
     }
 
     private gl = new GLCTX();
@@ -545,7 +546,7 @@ class PageManager
             const p: Vec3.Vec3 = [p01[0] * window.innerWidth * 0.5, p01[1] * window.innerHeight * -0.5, p01[2]];
 
             const zIndex = Math.floor((1.0 - p[2]) * 1000.0).toString();
-            const disabled = FdotD < 0.2 || this.clickButton;
+            const disabled = FdotD < this.constants.BUTTON_DOT_ACTIVE_THRESHOLD || this.clickButton;
             const textOffsetMultiplier = 1.2 + mouseInfluence * (Math.abs(RdotD) * NiceNames[i].length * 0.08 + 0.1);
             const textOpacity = ((mouseInfluence * 0.85 + 0.15) * (1.0 - t)).toString();
             const textScale = 16.0 / (Vec3.LengthSquared(pos) + 1.0) + mouseInfluence * 0.1;
@@ -602,28 +603,45 @@ class PageManager
         const mouseV = Vec3.Normalize(nearClipPos);
         const mouseP = Vec3.Add(nearClipPos, camera.position);
 
-        this.fSphereDir.forEach((dir) =>
+        this.fSphereDir.forEach((dir, index) =>
         {
+            const deltaScale = uniforms.deltaTime * 0.02;
             const d: Vec3.Vec3 = [dir[0], dir[1], dir[2]];
-            const p = Vec3.Add(Vec3.MultiplyScalar(d, this.constants.MAIN_SPHERE_RADIUS), this.constants.MAIN_SPHERE_POSITION);
-            let weight = Vec3.LengthSquared(Vec3.Subtract(ClosestPointOnLineFromPoint(mouseP, mouseV, p), p));
-            weight = 1.0 / (weight + 1.0);
-            const t = 1.0 - Math.max(Vec3.Dot(d, camera.view[2]), 0.0);
-            weight *= 1.0 - t * t;
+            let weight = dir[3];
+            let dot = Vec3.Dot(d, camera.view[2]);
+
+            if (dot > this.constants.BUTTON_DOT_ACTIVE_THRESHOLD)
+            {
+                const p = Vec3.Add(Vec3.MultiplyScalar(d, this.constants.MAIN_SPHERE_RADIUS), this.constants.MAIN_SPHERE_POSITION);
+
+                let w = Vec3.LengthSquared(Vec3.Subtract(ClosestPointOnLineFromPoint(mouseP, mouseV, p), p));
+                w = 1.0 / (w + 1.0);
+                
+                dot = 1.0 - Math.max(dot, 0.0);
+                dot = 1.0 - dot * dot;
+
+                w *= dot;
+
+                weight += w * deltaScale;
+            }
+
+            if (this.clickTargetIndex !== index)
+            {
+                weight *= 1.0 / (1.0 + deltaScale);
+            }
+            else
+            {
+                let t = (uniforms.time - this.clickTimeSnapshot) / 500.0;
+                t = Math.sin(3.0 * t) * Math.max(1.0 - t, 0.0);
+                t *= 4.0;
+
+                weight *= 1.0 / (1.0 + deltaScale * t);
+            }
+
+            if (weight > 1.0) { weight = 1.0; }
+
             dir[3] = weight;
         });
-
-        if (this.clickButton)
-        {
-            let t = (uniforms.time - this.clickTimeSnapshot) / 200.0;
-            t = 2.0 * t - 1.0;
-            t = t * t;
-            t = t * 0.5 + 0.5;
-            t = t > 1.0 ? 1.0 : t;
-            t = t * t * (3.0 - 2.0 * t);
-
-            this.fSphereDir[this.clickTargetIndex][3] *= t;
-        }
     }
 
     private CalculateSphereRotationDelta(uniforms: Uniforms, mouseDelta: Vec2.Vec2): void
