@@ -221,7 +221,7 @@ class PageManager
 
             this.uniforms.mouseMoved = true;
             this.uniforms.mousePosition = [e.touches[0].clientX - rect.left, e.touches[0].clientY - rect.top];
-            this.uniforms.mouseDelta = [this.uniforms.mouseClickPosition[0] - this.uniforms.mousePosition[0], -this.uniforms.mouseClickPosition[1] + this.uniforms.mousePosition[1]];
+            this.uniforms.mouseDelta = [this.uniforms.mousePosition[0] - this.uniforms.mouseClickPosition[0], -this.uniforms.mousePosition[1] + this.uniforms.mouseClickPosition[1]];
             this.mouseDelta = this.uniforms.mouseDelta;
         };
 
