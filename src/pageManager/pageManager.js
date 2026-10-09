@@ -411,6 +411,7 @@ class PageManager {
             const textOffsetMultiplier = 1.2 + mouseInfluence * (Math.abs(RdotD) * NiceNames[i].length * 0.08 + 0.1);
             const textOpacity = ((mouseInfluence * 0.85 + 0.15) * (1.0 - t)).toString();
             const textScale = 16.0 / (Vec3.LengthSquared(pos) + 1.0) + mouseInfluence * 0.1;
+            const textBlur = ((1.0 - FdotD) * (1.0 - FdotD) + 0.04) * 30.0;
             let axis = Vec3.CrossProduct(f, d);
             if (Vec3.AllComponentZero(axis)) {
                 axis = [...SceneConstants.UP];
@@ -421,6 +422,7 @@ class PageManager {
             this.fSphereElements[i].children[0].style.transform = `scale(${scale[0]}, ${scale[1]})`;
             this.fSphereElementText[i].style.transform = `translate(${p[0] * textOffsetMultiplier}px, ${p[1] * textOffsetMultiplier}px) rotate3d(${axis[0]}, ${-axis[1]}, ${axis[2]}, ${theta}rad) scale(${textScale})`;
             this.fSphereElementText[i].style.opacity = textOpacity;
+            this.fSphereElementText[i].style.filter = `blur(${textBlur}px)`;
             this.fSphereElementButtons[i].style.transform = `translate(${p[0] * 1.1}px, ${p[1] * 1.1}px)`;
             this.fSphereElementButtons[i].style.zIndex = zIndex;
             this.fSphereElementButtons[i].disabled = disabled;

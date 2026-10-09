@@ -285,13 +285,15 @@ button:focus {
 }
 
 .fSphereElementText {
-    will-change: transform, opacity;
+    will-change: transform, opacity, filter;
     position: absolute;
     /* display: flex;
     align-items: center;
     justify-content: center; */
     color:white;
-    text-shadow: 1vh 1vh 3vh rgb(30, 30, 30);
+    /* text-shadow: 1vh 1vh 3vh rgb(30, 30, 30); */
+    text-shadow: 0px 0px 60px rgb(0, 0, 0);
+    text-rendering: optimizeSpeed;
     backface-visibility: hidden;
     /* background-color: transparent; */
 }

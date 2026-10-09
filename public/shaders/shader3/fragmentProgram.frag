@@ -8,7 +8,7 @@ precision highp float;
 //#include "../include/coordData.glsl"
 #include "../include/primitive.glsl"
 
-const int RAYMARCH_ITERATIONS = 24;
+const int RAYMARCH_ITERATIONS = 16; // around 16 gives a DOF effect
 const int F_SPHERE_COUNT = 8;
 const vec3 MAIN_SPHERE_POSITION = vec3(0.0, 0.0, 0.0);
 const float MAIN_SPHERE_RADIUS = 4.0;
@@ -422,7 +422,8 @@ void main()
 
     vec3 lighting = Lighting(position, normal);
     lighting = (lighting + (dither - 0.5) * 0.02) * geoMask * alpha;
-    //lighting *= (geoMask < 0.9999 ? 0.333 : 0.0) + 1.0; // glossy effect
+    // lighting *= (geoMask < 0.99 ? 0.5 : 1.0) + 0.0; // glossy / metallic effect
+    // lighting *= min(max(40.0 * (geoMask - 0.97), 0.75), 1.0);
 
     vec3 background = Background(posNDC.xy, posNDCAspect, geoMask, dither);
 
