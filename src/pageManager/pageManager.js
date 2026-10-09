@@ -101,7 +101,8 @@ class PageManager {
         CAMERA_ZOOM_TIME: 2000.0,
         CAMERA_ACCELERATION: 0.01,
         PAGE_INFO_FADE_SPEED: 0.001,
-        BUTTON_DOT_ACTIVE_THRESHOLD: 0.2
+        BUTTON_DOT_ACTIVE_THRESHOLD: 0.2,
+        BUTTON_ANIMATION_DURATION: 500.0
     };
     gl = new GLCTX();
     uniforms = new Uniforms();
@@ -181,12 +182,13 @@ class PageManager {
         };
         window.onmousedown = (e) => {
             const rect = this.gl.canvas.getBoundingClientRect();
-            this.uniforms.mouseDown = true;
+            this.uniforms.mouseDown = e.button === 0;
             this.uniforms.mouseClickPosition = [e.clientX - rect.left, e.clientY - rect.top];
             this.uniforms.mouseClickTime = this.uniforms.time;
             this.uniforms.mouseDelta = [0.0, 0.0];
         };
         window.ontouchstart = (e) => {
+            e.preventDefault();
             const rect = this.gl.canvas.getBoundingClientRect();
             this.uniforms.mouseDown = true;
             this.uniforms.mouseClickPosition = [e.touches[0].clientX - rect.left, e.touches[0].clientY - rect.top];
@@ -458,16 +460,19 @@ class PageManager {
                 dot = 1.0 - Math.max(dot, 0.0);
                 dot = 1.0 - dot * dot;
                 w *= dot;
+                if (this.clickTargetIndex === index) {
+                    let t = (uniforms.time - this.clickTimeSnapshot) / this.constants.BUTTON_ANIMATION_DURATION;
+                    if (t > 1.0) {
+                        t = 1.0;
+                    }
+                    t = (t - 1.0) * (t - 1.0) * (8.0 * t);
+                    t = 1.0 - t * t;
+                    w *= t;
+                }
                 weight += w * deltaScale;
             }
             if (this.clickTargetIndex !== index) {
                 weight *= 1.0 / (1.0 + deltaScale);
-            }
-            else {
-                let t = (uniforms.time - this.clickTimeSnapshot) / 500.0;
-                t = Math.sin(3.0 * t) * Math.max(1.0 - t, 0.0);
-                t *= 4.0;
-                weight *= 1.0 / (1.0 + deltaScale * t);
             }
             if (weight > 1.0) {
                 weight = 1.0;
