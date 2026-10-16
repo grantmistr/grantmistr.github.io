@@ -21,6 +21,7 @@ export class Uniforms
     public screenSize: [number, number] = [0, 0];
     public aspectRatio: number = 1.0;
     public mousePosition: [number, number] = [0, 0];
+    public prevMousePosition: [number, number] = [0, 0];
     public mouseClickPosition: [number, number] = [0, 0];
     public mouseDelta: [number, number] = [0, 0];
 
@@ -37,9 +38,9 @@ export class Uniforms
     }
 }
 
-const PAGE_COUNT = 9;
+export const PAGE_COUNT = 9;
 
-const PageIndices =
+export const PageIndices =
 {
     '_projects': 0,
     '_3d': 1,
@@ -52,7 +53,7 @@ const PageIndices =
     '_home': 8
 };
 
-const PageNames =
+export const PageNames =
 {
     [PageIndices._projects]: 'projects',
     [PageIndices._3d]: '3d',
@@ -65,7 +66,7 @@ const PageNames =
     [PageIndices._home]: 'home'
 };
 
-const NiceNames =
+export const NiceNames =
 {
     [PageIndices._projects]: 'Projects',
     [PageIndices._3d]: '3D',
@@ -122,7 +123,8 @@ class PageManager
         CAMERA_ACCELERATION: 0.01,
         PAGE_INFO_FADE_SPEED: 0.001,
         BUTTON_DOT_ACTIVE_THRESHOLD: 0.2,
-        BUTTON_ANIMATION_DURATION: 500.0
+        BUTTON_ANIMATION_DURATION: 500.0,
+        TEXT_BLUR: 15.0
     }
 
     private gl = new GLCTX();
@@ -214,8 +216,9 @@ class PageManager
             const rect = this.gl.canvas!.getBoundingClientRect();
 
             this.uniforms.mouseMoved = true;
+            this.uniforms.prevMousePosition = this.uniforms.mousePosition;
             this.uniforms.mousePosition = [e.clientX - rect.left, e.clientY - rect.top];
-            this.uniforms.mouseDelta = [e.movementX, -e.movementY];
+            this.uniforms.mouseDelta = [this.uniforms.mousePosition[0] - this.uniforms.prevMousePosition[0], -this.uniforms.mousePosition[1] + this.uniforms.prevMousePosition[1]];
             this.mouseDelta = this.uniforms.mouseDelta;
         };
 
@@ -226,9 +229,9 @@ class PageManager
             const rect = this.gl.canvas!.getBoundingClientRect();
 
             this.uniforms.mouseMoved = true;
-            this.uniforms.mouseClickPosition = this.uniforms.mousePosition;
+            this.uniforms.prevMousePosition = this.uniforms.mousePosition;
             this.uniforms.mousePosition = [e.touches[0].clientX - rect.left, e.touches[0].clientY - rect.top];
-            this.uniforms.mouseDelta = [this.uniforms.mousePosition[0] - this.uniforms.mouseClickPosition[0], -this.uniforms.mousePosition[1] + this.uniforms.mouseClickPosition[1]];
+            this.uniforms.mouseDelta = [this.uniforms.mousePosition[0] - this.uniforms.prevMousePosition[0], -this.uniforms.mousePosition[1] + this.uniforms.prevMousePosition[1]];
             this.mouseDelta = this.uniforms.mouseDelta;
         };
 
@@ -553,14 +556,12 @@ class PageManager
             const textOffsetMultiplier = 1.2 + mouseInfluence * (Math.abs(RdotD) * NiceNames[i].length * 0.08 + 0.1);
             const textOpacity = ((mouseInfluence * 0.85 + 0.15) * (1.0 - t)).toString();
             const textScale = 16.0 / (Vec3.LengthSquared(pos) + 1.0) + mouseInfluence * 0.1;
-            const textBlur = ((1.0 - FdotD) * (1.0 - FdotD) + 0.04) * 30.0;
-
+            
             let axis = Vec3.CrossProduct(f, d);
-            if (Vec3.AllComponentZero(axis))
-            {
-                axis = [...SceneConstants.UP];
-            }
+            if (Vec3.AllComponentZero(axis)) { axis = [...SceneConstants.UP]; }
             const theta = Math.acos(FdotD) * (1.0 - mouseInfluence) * (1.0 - mouseInfluence) * 0.9;
+
+            const textBlur = (1.04 - FdotD) * this.constants.TEXT_BLUR * (Math.abs(theta) * 1.5 + 1.0);
 
             this.fSphereElements[i].style.transform = `translate(${p[0]}px, ${p[1]}px)`;
             this.fSphereElements[i].style.zIndex = zIndex;
@@ -778,7 +779,7 @@ class PageManager
         this.CalculateMouseInfluenceWeights(this.uniforms, this.camera);
         this.UpdateHTMLElements(this.uniforms, this.camera);
 
-        if (this.programInfo !== null)
+        if (this.programInfo !== null && this.camera.position[2] < -this.constants.MAIN_SPHERE_RADIUS)
         {
             this.gl.SetActiveProgram(this.programInfo);
             this.programInfo.UpdateUniforms(this.gl.gl!, this.uniforms, this.camera, this.rotationMatrix, this.fSphereDir);

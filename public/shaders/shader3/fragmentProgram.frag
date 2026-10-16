@@ -20,10 +20,11 @@ const float CAMERA_FOV = 60.0 * (PI / 180.0);
 const float LIGHT_BEAM_FALLOFF_DISTANCE = CAMERA_DISTANCE * 0.5;
 const float LIGHT_BEAM_FALLOFF_DISTANCE_INV = 1.0 / LIGHT_BEAM_FALLOFF_DISTANCE;
 const float PARTICLE_SPEED = 0.0006;
-const float PARTICLES_X = 200.0;
+const float PARTICLES_X = 50.0;
 const float PARTICLES_X_INV = 1.0 / PARTICLES_X;
 const float PARTICLES_Y = 4.0;
 const float PARTICLES_Y_INV = 1.0 / PARTICLES_Y;
+const float BACKGROUND_STRENGTH = 0.08;
 
 const vec3[] F_SPHERE_DIRECTIONS = vec3[F_SPHERE_COUNT] // fibonacci lattice
 (
@@ -109,7 +110,7 @@ float DistanceCheck(vec3 pos, out float holeMask)
     float sphereDistance = SDFSphere(pos, MAIN_SPHERE_POSITION, MAIN_SPHERE_RADIUS);
 
     float d = SDFSmoothUnion(s, sphereDistance, 1.0);
-    d += cos(posRot.x * posRot.y * posRot.z) * 0.02; // ridges
+    d += cos(posRot.x * posRot.y * posRot.z) * 0.03; // ridges
 
     holeMask = SDFIntersect(s0 + 0.2, s1);
 
@@ -132,7 +133,6 @@ float RayMarch(vec3 startPosition, vec3 rayDirection, out vec3 position, out vec
     vec3 nY = dFdy(position);
     normal = normalize(cross(nY, nX));
 
-    //holeMask = Clamp01(-holeMask * 8.0);
     holeMask = -holeMask;
     geoMask = Clamp01(1.0 - d);
 
@@ -190,8 +190,9 @@ vec4 CalculateLightBeam(vec3 startPosition, float depthSqr, vec3 cylinderPos, ve
 
     // edge fade x coord
     float particleFade = 1.0 - 2.0 * xCoord;
-    particleFade = 1.0 - particleFade * particleFade;
-    particleFade *= particleFade;
+    //particleFade = 1.0 - particleFade * particleFade;
+    particleFade = 1.0 - abs(particleFade);
+    //particleFade *= particleFade;
 
     // each particle fades along its y coord
     particleFade *= (1.0 - yCoord);
@@ -360,7 +361,7 @@ vec3 Background(vec2 posNDC, vec2 posNDCAspect, float geoMask, float dither)
     vec2 v1 = RotateVec2(c1, uTime * -0.000033);
     float t1 = sin(atan(v1.x, v1.y) * 23.0);
 
-    float o = 1.0 / (t0 * t1 + 2.0) * 0.07;
+    float o = 1.0 / (t0 * t1 + 2.0) * BACKGROUND_STRENGTH;
 
     return vec3(1.0, 0.0, 1.0) * Clamp01(o * (1.0 - geoMask) - dither * 0.02);
 }
