@@ -116,7 +116,6 @@ class PageManager {
     pageNeedsUpdate = false;
     webGLCanvasWrapper = document.getElementById('webGLCanvasWrapper');
     camera = new Camera(SceneConstants.CAMERA_NEAR, SceneConstants.CAMERA_FAR, SceneConstants.CAMERA_FOV, window.innerWidth / window.innerHeight, [...this.constants.DEFAULT_CAMERA_POSITION], [...this.constants.MAIN_SPHERE_POSITION]);
-    mouseDelta = [0.0, 0.0];
     sphereRotationDelta = [0.0, 0.0];
     rotationMatrix = Mat3.IDENTITY;
     cssPerspective = 1000.0;
@@ -172,7 +171,6 @@ class PageManager {
             this.uniforms.prevMousePosition = this.uniforms.mousePosition;
             this.uniforms.mousePosition = [e.clientX - rect.left, e.clientY - rect.top];
             this.uniforms.mouseDelta = [this.uniforms.mousePosition[0] - this.uniforms.prevMousePosition[0], -this.uniforms.mousePosition[1] + this.uniforms.prevMousePosition[1]];
-            this.mouseDelta = this.uniforms.mouseDelta;
         };
         window.ontouchmove = (e) => {
             e.preventDefault();
@@ -181,7 +179,6 @@ class PageManager {
             this.uniforms.prevMousePosition = this.uniforms.mousePosition;
             this.uniforms.mousePosition = [e.touches[0].clientX - rect.left, e.touches[0].clientY - rect.top];
             this.uniforms.mouseDelta = [this.uniforms.mousePosition[0] - this.uniforms.prevMousePosition[0], -this.uniforms.mousePosition[1] + this.uniforms.prevMousePosition[1]];
-            this.mouseDelta = this.uniforms.mouseDelta;
         };
         window.onmousedown = (e) => {
             const rect = this.gl.canvas.getBoundingClientRect();
@@ -582,7 +579,6 @@ class PageManager {
         this.UpdatePageData();
         this.UpdatePageInfosDisplay(this.uniforms);
         this.uniforms.PostUpdate();
-        this.mouseDelta = [0.0, 0.0]; // reset to 0 every frame for when mouse stops moving
     }
 }
 function Render(timeSinceLoad) {

@@ -17,6 +17,11 @@ export function InitSideBar(): void
             location.hash = PageNames[i];
         }
 
+        e.ontouchend = () =>
+        {
+            location.hash = PageNames[i];
+        }
+
         sideBar.appendChild(e);
     }
 }
