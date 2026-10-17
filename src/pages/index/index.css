@@ -63,62 +63,99 @@ button:focus {
     z-index: 5;
 }
 
-#sideBar {
-    position: relative;
-    width: 100%;
-    height: 100%;
-    backdrop-filter: blur(10px);
-    background-color: rgba(0, 0, 0, 0.5);
-    border-right: 1px solid rgba(0, 0, 0, 0.5);
-}
-
 #navToggleButton {
-    position: relative;
-    padding-bottom: 10px;
-    padding-left: 40px;
-    padding-right: 10px;
-    padding-top: 40px;
-    width: 50px;
-    height: 50px;
+    position: absolute;
+    top: 40px;
+    left: 40px;
+    width: 40px;
+    height: 40px;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    opacity: 0.2;
+    opacity: 0.5;
+    z-index: 2;
 
     transition-property: opacity;
     transition-duration: 0.5s;
 }
 
 #navToggleButton:hover {
-    opacity: 0.75;
+    opacity: 1.0;
     cursor: pointer;
 }
 
 .navToggleButtonLine {
     position: relative;
-    margin: 6px;
+    margin: 4px;
     width: 100%;
     height: 2px;
     border-radius: 1px;
     background-color: white;
 }
 
+#sideBarBackground {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    backdrop-filter: blur(10px);
+    background-color: rgba(0, 0, 0, 0.75);
+    border-right: 1px solid rgba(0, 0, 0, 0.75);
+    z-index: 0;
+}
+
+#sideBar {
+    position: relative;
+    top: 100px;
+    width: 100%;
+    height: 100%;
+    z-index: 1;
+}
+
 .navButton {
     position: relative;
+    width: 100%;
+    height: 46px;
+}
+
+.navButton:hover {
+    cursor: pointer;
+}
+
+.navButton:hover .navButtonText {
+    opacity: 1.0;
+}
+
+.navButton:hover .navButtonBackground {
+    opacity: 0.5;
+}
+
+.navButtonText {
+    position: absolute;
+    width: 100%;
+    height: 100%;
     font-size: x-large;
-    width: 90%;
-    opacity: 0.2;
-    padding: 10px;
     text-indent: 40px;
+    align-content: center;
+    opacity: 0.5;
+    z-index: 1;
 
     transition-property: opacity;
     transition-duration: 0.25s;
 }
 
-.navButton:hover {
-    opacity: 0.75;
-    cursor: pointer;
+.navButtonBackground {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    opacity: 0.0;
+    background-color: black;
+    z-index: 0;
+
+    transition-property: opacity;
+    transition-duration: 0.25s;
 }
 
 #header {
@@ -316,6 +353,7 @@ button:focus {
 .fSphereElementText {
     will-change: transform, opacity, filter;
     position: absolute;
+    width: max-content;
     /* display: flex;
     align-items: center;
     justify-content: center; */

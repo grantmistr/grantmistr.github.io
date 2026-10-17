@@ -68,24 +68,22 @@ export const NiceNames = {
 function GetLocationIndex(locationHash) {
     const s = locationHash.slice(1); // remove #
     switch (s) {
-        case PageNames[0]:
-            return 0;
-        case PageNames[1]:
-            return 1;
-        case PageNames[2]:
-            return 2;
-        case PageNames[3]:
-            return 3;
-        case PageNames[4]:
-            return 4;
-        case PageNames[5]:
-            return 5;
-        case PageNames[6]:
-            return 6;
-        case PageNames[7]:
-            return 7;
-        case PageNames[8]:
-            return 8;
+        case PageNames[PageIndices._projects]:
+            return PageIndices._projects;
+        case PageNames[PageIndices._3d]:
+            return PageIndices._3d;
+        case PageNames[PageIndices._digital2d]:
+            return PageIndices._digital2d;
+        case PageNames[PageIndices._logodesign]:
+            return PageIndices._logodesign;
+        case PageNames[PageIndices._p4]:
+            return PageIndices._p4;
+        case PageNames[PageIndices._p5]:
+            return PageIndices._p5;
+        case PageNames[PageIndices._p6]:
+            return PageIndices._p6;
+        case PageNames[PageIndices._contactinfo]:
+            return PageIndices._contactinfo;
         default:
             return PageIndices._home;
     }
