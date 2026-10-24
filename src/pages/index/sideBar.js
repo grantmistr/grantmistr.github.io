@@ -2,6 +2,8 @@ import { NiceNames, PAGE_COUNT, PageNames } from "../../pageManager/pageManager.
 export function InitSideBar() {
     const sideBar = document.getElementById('sideBar');
     const toggle = document.getElementById('navToggleButton');
+    const sideBarWrapper = document.getElementById('sideBarWrapper');
+    const toggleData = new WeakMap();
     for (let i = 0; i < PAGE_COUNT; i++) {
         const navButton = document.createElement('div');
         navButton.className = 'navButton';
@@ -23,4 +25,16 @@ export function InitSideBar() {
         navButton.appendChild(navButtonBackground);
         sideBar.appendChild(navButton);
     }
+    toggleData.set(toggle, false);
+    sideBarWrapper.setAttribute('state', 'closed');
+    toggle.onclick = () => {
+        const toggleState = toggleData.get(toggle);
+        toggleData.set(toggle, !toggleState);
+        if (toggleState) {
+            sideBarWrapper.setAttribute('state', 'closed');
+        }
+        else {
+            sideBarWrapper.setAttribute('state', 'open');
+        }
+    };
 }

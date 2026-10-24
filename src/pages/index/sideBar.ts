@@ -4,6 +4,8 @@ export function InitSideBar(): void
 {
     const sideBar = document.getElementById('sideBar') as HTMLDivElement;
     const toggle = document.getElementById('navToggleButton') as HTMLDivElement;
+    const sideBarWrapper = document.getElementById('sideBarWrapper') as HTMLDivElement;
+    const toggleData = new WeakMap();
 
     for (let i = 0; i < PAGE_COUNT; i++)
     {
@@ -35,4 +37,22 @@ export function InitSideBar(): void
 
         sideBar.appendChild(navButton);
     }
+
+    toggleData.set(toggle, false);
+    sideBarWrapper.setAttribute('state', 'closed');
+
+    toggle.onclick = () =>
+    {
+        const toggleState: boolean = toggleData.get(toggle);
+        toggleData.set(toggle, !toggleState);
+
+        if (toggleState)
+        {
+            sideBarWrapper.setAttribute('state', 'closed');
+        }
+        else
+        {
+            sideBarWrapper.setAttribute('state', 'open');
+        }
+    };
 }

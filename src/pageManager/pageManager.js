@@ -182,6 +182,8 @@ class PageManager {
             const rect = this.gl.canvas.getBoundingClientRect();
             this.uniforms.mouseDown = e.button === 0;
             this.uniforms.mouseClickPosition = [e.clientX - rect.left, e.clientY - rect.top];
+            this.uniforms.prevMousePosition = this.uniforms.mouseClickPosition;
+            this.uniforms.mousePosition = this.uniforms.mouseClickPosition;
             this.uniforms.mouseClickTime = this.uniforms.time;
             this.uniforms.mouseDelta = [0.0, 0.0];
         };
@@ -190,6 +192,8 @@ class PageManager {
             const rect = this.gl.canvas.getBoundingClientRect();
             this.uniforms.mouseDown = true;
             this.uniforms.mouseClickPosition = [e.touches[0].clientX - rect.left, e.touches[0].clientY - rect.top];
+            this.uniforms.prevMousePosition = this.uniforms.mouseClickPosition;
+            this.uniforms.mousePosition = this.uniforms.mouseClickPosition;
             this.uniforms.mouseClickTime = this.uniforms.time;
             this.uniforms.mouseDelta = [0.0, 0.0];
         };
@@ -197,6 +201,7 @@ class PageManager {
             this.uniforms.mouseDown = false;
         };
         window.ontouchend = (e) => {
+            e.preventDefault();
             this.uniforms.mouseDown = false;
         };
     }
