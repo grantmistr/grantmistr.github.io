@@ -376,8 +376,8 @@ class PageManager {
                 location.hash = PageNames[i];
                 // history.pushState({}, '', 'button' + i.toString());
             };
-            button.onmouseover = (e) => {
-                // console.log("hover " + index);
+            button.ontouchend = (e) => {
+                location.hash = PageNames[i];
             };
             this.fSphereElementsContainer.appendChild(element);
             this.fSphereElementButtonsContainer.appendChild(button);

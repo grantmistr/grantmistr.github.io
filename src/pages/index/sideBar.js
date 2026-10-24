@@ -27,7 +27,9 @@ export function InitSideBar() {
     }
     toggleData.set(toggle, false);
     sideBarWrapper.setAttribute('state', 'closed');
-    toggle.onclick = () => {
+    toggle.onclick = OnToggleClick;
+    toggle.ontouchend = OnToggleClick;
+    function OnToggleClick() {
         const toggleState = toggleData.get(toggle);
         toggleData.set(toggle, !toggleState);
         if (toggleState) {
@@ -36,5 +38,5 @@ export function InitSideBar() {
         else {
             sideBarWrapper.setAttribute('state', 'open');
         }
-    };
+    }
 }

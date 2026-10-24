@@ -504,9 +504,9 @@ class PageManager
                 // history.pushState({}, '', 'button' + i.toString());
             };
 
-            button.onmouseover = (e: MouseEvent) =>
+            button.ontouchend = (e: TouchEvent) =>
             {
-                // console.log("hover " + index);
+                location.hash = PageNames[i];
             };
 
             this.fSphereElementsContainer.appendChild(element);
