@@ -557,7 +557,7 @@ class PageManager
             const textOffsetMultiplier = 1.2 + mouseInfluence * (Math.abs(RdotD) * NiceNames[i].length * 0.08 + 0.1);
             const textOpacity = ((mouseInfluence * 0.85 + 0.15) * (1.0 - t)).toString();
             const textScale = 16.0 / (Vec3.LengthSquared(pos) + 1.0) + mouseInfluence * 0.1;
-            
+
             let axis = Vec3.CrossProduct(f, d);
             if (Vec3.AllComponentZero(axis)) { axis = [...SceneConstants.UP]; }
             const theta = Math.acos(FdotD) * (1.0 - mouseInfluence) * (1.0 - mouseInfluence) * 0.9;

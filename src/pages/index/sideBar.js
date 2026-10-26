@@ -1,7 +1,7 @@
 import { NiceNames, PAGE_COUNT, PageNames } from "../../pageManager/pageManager.js";
 export function InitSideBar() {
     const sideBar = document.getElementById('sideBar');
-    const toggle = document.getElementById('navToggleButton');
+    const toggle = document.getElementById('sideBarToggleButton');
     const sideBarWrapper = document.getElementById('sideBarWrapper');
     const toggleData = new WeakMap();
     for (let i = 0; i < PAGE_COUNT; i++) {
