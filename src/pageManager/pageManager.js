@@ -242,8 +242,8 @@ class PageManager {
     // private UpdatePageState(locationHash: string, oldURL: string): void
     // I split this function off from UpdatePageIndices because I was occasionally getting NaNs in my
     // matrices that get passed to the shader. My thought was that there was some sort of race condition
-    // since the rotation matrix was getting updated from the event listener and the update loop. This
-    // didn't fix the NaN issue, so idk, but I'm keeping it this way for the aforementioned reason.
+    // since the rotation matrix was getting updated from the event listener and the update loop. The
+    // NaN issue was actually Math.acos getting values outside -1 1 range, but imma keep it this way.
     UpdatePageData() {
         if (!this.pageNeedsUpdate) {
             return;
@@ -284,10 +284,11 @@ class PageManager {
         else {
             c = Vec3.Normalize(c);
         }
+        let dot = Vec3.Dot(a, b);
+        dot = Math.max(-1.0, Math.min(1.0, dot));
         this.clickRotationAxis = c;
-        this.clickRotationTheta = Math.acos(Vec3.Dot(a, b));
+        this.clickRotationTheta = Math.acos(dot);
         this.clickMatrixSnapshot = this.rotationMatrix;
-        console.log(b);
     }
     UpdatePageInfosDisplay(uniforms) {
         if (!this.pageInfosNeedUpdate) {
@@ -348,12 +349,13 @@ class PageManager {
     InitHTMLElements(uniforms, camera) {
         this.UpdateCSSPerspective(uniforms, camera);
         this.UpdateFSphereElementSize();
+        const mainContent = document.getElementById('mainContent');
         this.fSphereElementsContainer.id = "fSphereElementsContainer";
-        document.body.appendChild(this.fSphereElementsContainer);
+        mainContent.appendChild(this.fSphereElementsContainer);
         this.fSphereElementButtonsContainer.id = "fSphereElementButtonsContainer";
-        document.body.appendChild(this.fSphereElementButtonsContainer);
+        mainContent.appendChild(this.fSphereElementButtonsContainer);
         this.fSphereElementTextContainer.id = "fSphereElementTextContainer";
-        document.body.appendChild(this.fSphereElementTextContainer);
+        mainContent.appendChild(this.fSphereElementTextContainer);
         F_SPHERE_DIRECTIONS.forEach((dir, i) => {
             const index = i.toString();
             const color = Vec3.MultiplyScalar(F_SPHERE_COLORS[i], 2.0);
@@ -402,6 +404,8 @@ class PageManager {
             const d = [dir[0], dir[1], dir[2]];
             const FdotD = Vec3.Dot(f, d);
             const RdotD = Vec3.Dot(r, d);
+            const clampedFdotD = Math.max(-1.0, Math.min(1.0, FdotD));
+            const clampedRdotD = Math.max(-1.0, Math.min(1.0, RdotD));
             const mouseInfluence = dir[3];
             const worldPos = Vec3.MultiplyScalar(d, radius);
             const camRelativeWorldPos = Vec3.Subtract(worldPos, camera.position);
@@ -410,19 +414,19 @@ class PageManager {
             const p01 = [v[0] / v[3], v[1] / v[3], v[2] / v[3]];
             const p = [p01[0] * window.innerWidth * 0.5, p01[1] * window.innerHeight * -0.5, p01[2]];
             const zIndex = Math.floor((1.0 - p[2]) * 1000.0).toString();
-            const disabled = FdotD < this.constants.BUTTON_DOT_ACTIVE_THRESHOLD || this.clickButton;
-            const textOffsetMultiplier = 1.2 + mouseInfluence * (Math.abs(RdotD) * NiceNames[i].length * 0.08 + 0.1);
+            const disabled = clampedFdotD < this.constants.BUTTON_DOT_ACTIVE_THRESHOLD || this.clickButton;
+            const textOffsetMultiplier = 1.2 + mouseInfluence * (Math.abs(clampedRdotD) * NiceNames[i].length * 0.08 + 0.1);
             const textOpacity = ((mouseInfluence * 0.85 + 0.15) * (1.0 - t)).toString();
             const textScale = 16.0 / (Vec3.LengthSquared(pos) + 1.0) + mouseInfluence * 0.1;
             let axis = Vec3.CrossProduct(f, d);
             if (Vec3.AllComponentZero(axis)) {
                 axis = [...SceneConstants.UP];
             }
-            const theta = Math.acos(FdotD) * (1.0 - mouseInfluence) * (1.0 - mouseInfluence) * 0.9;
-            const textBlur = (1.04 - FdotD) * this.constants.TEXT_BLUR * (Math.abs(theta) * 1.5 + 1.0);
+            const theta = Math.acos(clampedFdotD) * (1.0 - mouseInfluence) * (1.0 - mouseInfluence) * 0.9;
+            const textBlur = (1.04 - clampedFdotD) * this.constants.TEXT_BLUR * (Math.abs(theta) * 1.5 + 1.0);
             this.fSphereElements[i].style.transform = `translate(${p[0]}px, ${p[1]}px)`;
             this.fSphereElements[i].style.zIndex = zIndex;
-            this.fSphereElements[i].children[0].style.transform = `scale(${scale[0]}, ${scale[1]})`;
+            this.fSphereElements[i].children[0].style.transform = `scale(${scale[0]}, ${scale[1]})`; // background
             this.fSphereElementText[i].style.transform = `translate(${p[0] * textOffsetMultiplier}px, ${p[1] * textOffsetMultiplier}px) rotate3d(${axis[0]}, ${-axis[1]}, ${axis[2]}, ${theta}rad) scale(${textScale})`;
             this.fSphereElementText[i].style.opacity = textOpacity;
             this.fSphereElementText[i].style.filter = `blur(${textBlur}px)`;
@@ -574,7 +578,7 @@ class PageManager {
         this.UpdateRotationMatrix(this.uniforms, this.uniforms.mouseDelta);
         this.CalculateMouseInfluenceWeights(this.uniforms, this.camera);
         this.UpdateHTMLElements(this.uniforms, this.camera);
-        if (this.programInfo !== null && this.camera.position[2] < -this.constants.MAIN_SPHERE_RADIUS) {
+        if (this.programInfo !== null && this.camera.position[2] < -(this.constants.MAIN_SPHERE_RADIUS + 0.001)) {
             this.gl.SetActiveProgram(this.programInfo);
             this.programInfo.UpdateUniforms(this.gl.gl, this.uniforms, this.camera, this.rotationMatrix, this.fSphereDir);
             this.programInfo.Execute(this.gl.gl);

@@ -1,11 +1,12 @@
-import { NiceNames, PAGE_COUNT, PageIndices, PageNames } from "../../pageManager/pageManager.js";
+import { NiceNames, PAGE_COUNT, PageNames } from "../../pageManager/pageManager.js";
+
+let sideBarToggleButtonToggleState = false;
 
 export function InitSideBar(): void
 {
     const sideBar = document.getElementById('sideBar') as HTMLDivElement;
-    const toggle = document.getElementById('sideBarToggleButton') as HTMLDivElement;
+    const sideBarToggleButton = document.getElementById('sideBarToggleButton') as HTMLDivElement;
     const sideBarWrapper = document.getElementById('sideBarWrapper') as HTMLDivElement;
-    const toggleData = new WeakMap();
 
     for (let i = 0; i < PAGE_COUNT; i++)
     {
@@ -38,24 +39,25 @@ export function InitSideBar(): void
         sideBar.appendChild(navButton);
     }
 
-    toggleData.set(toggle, false);
+    sideBarToggleButton.setAttribute('state', 'closed');
     sideBarWrapper.setAttribute('state', 'closed');
 
-    toggle.onclick = OnToggleClick;
-    toggle.ontouchend = OnToggleClick;
+    sideBarToggleButton.onclick = OnToggleButtonClick;
+    sideBarToggleButton.ontouchend = OnToggleButtonClick;
 
-    function OnToggleClick()
+    function OnToggleButtonClick()
     {
-        const toggleState: boolean = toggleData.get(toggle);
-        toggleData.set(toggle, !toggleState);
+        sideBarToggleButtonToggleState = !sideBarToggleButtonToggleState;
 
-        if (toggleState)
+        if (sideBarToggleButtonToggleState)
         {
-            sideBarWrapper.setAttribute('state', 'closed');
+            sideBarToggleButton.setAttribute('state', 'open');
+            sideBarWrapper.setAttribute('state', 'open');
         }
         else
         {
-            sideBarWrapper.setAttribute('state', 'open');
+            sideBarToggleButton.setAttribute('state', 'closed');
+            sideBarWrapper.setAttribute('state', 'closed');
         }
     }
 }
