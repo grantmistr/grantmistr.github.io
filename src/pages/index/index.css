@@ -33,6 +33,27 @@ button:focus {
     color: #444444;
 } */
 
+#aboutWrapper {
+    position: fixed;
+    width: 100vw;
+    height: 100vh;
+    z-index: 1;
+    backdrop-filter: blur(16px);
+}
+
+#about {
+    position: fixed;
+    top: 60px;
+    left: 300px;
+    right: 60px;
+    max-width: 800px;
+    font-size: xx-large;
+    z-index: 1;
+    filter: blur(0.1px);
+    opacity: 1.0;
+    transform: translateY(0px);
+}
+
 #mainContent {
     position: fixed;
     width: 100vw;
@@ -64,7 +85,7 @@ button:focus {
     align-items: center;
     justify-content: center; */
     opacity: 0.5;
-    z-index: 2;
+    z-index: 3;
 
     transition-property: opacity;
     transition-duration: 0.5s;
@@ -125,7 +146,7 @@ button:focus {
     left: 0;
     width: 225px;
     height: 100vh;
-    z-index: 1;
+    z-index: 2;
     transform: translateX(-226px);
 
     transition-property: transform;

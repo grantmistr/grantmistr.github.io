@@ -133,6 +133,7 @@ class PageManager
     private pageInfosNeedUpdate = false;
     private pageIndices: [number, number] = [PageIndices._home, PageIndices._home];
     private pageNeedsUpdate = false;
+    private mainContent: HTMLDivElement = document.getElementById('mainContent') as HTMLDivElement;
     private webGLCanvasWrapper: HTMLDivElement = document.getElementById('webGLCanvasWrapper') as HTMLDivElement;
     private camera = new Camera(
         SceneConstants.CAMERA_NEAR,
@@ -208,6 +209,7 @@ class PageManager
             this.gl.OnResize();
         };
 
+        //this.mainContent.onmousemove = (e: MouseEvent) =>
         window.onmousemove = (e: MouseEvent) =>
         {
             const rect = this.gl.canvas!.getBoundingClientRect();
@@ -230,7 +232,8 @@ class PageManager
             this.uniforms.mouseDelta = [this.uniforms.mousePosition[0] - this.uniforms.prevMousePosition[0], -this.uniforms.mousePosition[1] + this.uniforms.prevMousePosition[1]];
         };
 
-        window.onmousedown = (e: MouseEvent) =>
+        this.mainContent.onmousedown = (e: MouseEvent) =>
+        //window.onmousedown = (e: MouseEvent) =>
         {
             const rect = this.gl.canvas!.getBoundingClientRect();
 
@@ -256,7 +259,8 @@ class PageManager
             this.uniforms.mouseDelta = [0.0, 0.0];
         };
 
-        window.onmouseup = (e: MouseEvent) =>
+        this.mainContent.onmouseup = (e: MouseEvent) =>
+        //window.onmouseup = (e: MouseEvent) =>
         {
             this.uniforms.mouseDown = false;
         };

@@ -112,6 +112,7 @@ class PageManager {
     pageInfosNeedUpdate = false;
     pageIndices = [PageIndices._home, PageIndices._home];
     pageNeedsUpdate = false;
+    mainContent = document.getElementById('mainContent');
     webGLCanvasWrapper = document.getElementById('webGLCanvasWrapper');
     camera = new Camera(SceneConstants.CAMERA_NEAR, SceneConstants.CAMERA_FAR, SceneConstants.CAMERA_FOV, window.innerWidth / window.innerHeight, [...this.constants.DEFAULT_CAMERA_POSITION], [...this.constants.MAIN_SPHERE_POSITION]);
     sphereRotationDelta = [0.0, 0.0];
@@ -163,6 +164,7 @@ class PageManager {
             this.UpdateFSphereElementSize();
             this.gl.OnResize();
         };
+        //this.mainContent.onmousemove = (e: MouseEvent) =>
         window.onmousemove = (e) => {
             const rect = this.gl.canvas.getBoundingClientRect();
             this.uniforms.mouseMoved = true;
@@ -178,7 +180,7 @@ class PageManager {
             this.uniforms.mousePosition = [e.touches[0].clientX - rect.left, e.touches[0].clientY - rect.top];
             this.uniforms.mouseDelta = [this.uniforms.mousePosition[0] - this.uniforms.prevMousePosition[0], -this.uniforms.mousePosition[1] + this.uniforms.prevMousePosition[1]];
         };
-        window.onmousedown = (e) => {
+        this.mainContent.onmousedown = (e) => {
             const rect = this.gl.canvas.getBoundingClientRect();
             this.uniforms.mouseDown = e.button === 0;
             this.uniforms.mouseClickPosition = [e.clientX - rect.left, e.clientY - rect.top];
@@ -197,7 +199,7 @@ class PageManager {
             this.uniforms.mouseClickTime = this.uniforms.time;
             this.uniforms.mouseDelta = [0.0, 0.0];
         };
-        window.onmouseup = (e) => {
+        this.mainContent.onmouseup = (e) => {
             this.uniforms.mouseDown = false;
         };
         window.ontouchend = (e) => {
