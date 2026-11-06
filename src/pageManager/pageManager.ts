@@ -175,7 +175,7 @@ class PageManager
 
     public Initialize(): void
     {
-        window.onload = (e: Event) =>
+        window.addEventListener('load', (e: Event) =>
         {
             this.uniforms.screenSize = [window.innerWidth, window.innerHeight];
             this.uniforms.aspectRatio = window.innerWidth / window.innerHeight;
@@ -191,7 +191,11 @@ class PageManager
             this.SetInitialPageState(location.hash);
 
             StartRender();
-        };
+        });
+
+        // window.onload = (e: Event) =>
+        // {
+        // };
 
         window.onhashchange = (e: HashChangeEvent) =>
         {
@@ -245,7 +249,8 @@ class PageManager
             this.uniforms.mouseDelta = [0.0, 0.0];
         };
 
-        window.ontouchstart = (e: TouchEvent) =>
+        this.mainContent.ontouchstart = (e: TouchEvent) =>
+        //window.ontouchstart = (e: TouchEvent) =>
         {
             e.preventDefault();
 
@@ -265,7 +270,8 @@ class PageManager
             this.uniforms.mouseDown = false;
         };
 
-        window.ontouchend = (e: TouchEvent) =>
+        this.mainContent.ontouchend = (e: TouchEvent) =>
+        //window.ontouchend = (e: TouchEvent) =>
         {
             e.preventDefault();
 
@@ -512,10 +518,10 @@ class PageManager
                 // history.pushState({}, '', 'button' + i.toString());
             };
 
-            button.ontouchend = (e: TouchEvent) =>
-            {
-                location.hash = PageNames[i];
-            };
+            // button.ontouchend = (e: TouchEvent) =>
+            // {
+            //     location.hash = PageNames[i];
+            // };
 
             this.fSphereElementsContainer.appendChild(element);
             this.fSphereElementButtonsContainer.appendChild(button);

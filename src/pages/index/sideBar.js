@@ -1,4 +1,5 @@
 import { NiceNames, PAGE_COUNT, PageNames } from "../../pageManager/pageManager.js";
+import { ClearAboutOverlay } from "./about.js";
 let sideBarToggleButtonToggleState = false;
 export function InitSideBar() {
     const sideBar = document.getElementById('sideBar');
@@ -10,10 +11,12 @@ export function InitSideBar() {
         navButton.id = navButton.className + i.toString();
         navButton.onclick = () => {
             location.hash = PageNames[i];
+            ClearAboutOverlay();
         };
-        navButton.ontouchend = () => {
-            location.hash = PageNames[i];
-        };
+        // navButton.ontouchend = () =>
+        // {
+        //     location.hash = PageNames[i];
+        // };
         const navButtonText = document.createElement('div');
         navButtonText.className = 'navButtonText';
         navButtonText.id = navButtonText.className + i.toString();

@@ -139,7 +139,7 @@ class PageManager {
     constructor() {
     }
     Initialize() {
-        window.onload = (e) => {
+        window.addEventListener('load', (e) => {
             this.uniforms.screenSize = [window.innerWidth, window.innerHeight];
             this.uniforms.aspectRatio = window.innerWidth / window.innerHeight;
             this.camera.UpdateProjectionMatrix(this.uniforms.aspectRatio);
@@ -151,7 +151,10 @@ class PageManager {
             this.LoadShaderProgram();
             this.SetInitialPageState(location.hash);
             StartRender();
-        };
+        });
+        // window.onload = (e: Event) =>
+        // {
+        // };
         window.onhashchange = (e) => {
             this.UpdatePageIndices(location.hash, e.oldURL);
             // this.UpdatePageState(location.hash, e.oldURL);
@@ -189,7 +192,7 @@ class PageManager {
             this.uniforms.mouseClickTime = this.uniforms.time;
             this.uniforms.mouseDelta = [0.0, 0.0];
         };
-        window.ontouchstart = (e) => {
+        this.mainContent.ontouchstart = (e) => {
             e.preventDefault();
             const rect = this.gl.canvas.getBoundingClientRect();
             this.uniforms.mouseDown = true;
@@ -202,7 +205,7 @@ class PageManager {
         this.mainContent.onmouseup = (e) => {
             this.uniforms.mouseDown = false;
         };
-        window.ontouchend = (e) => {
+        this.mainContent.ontouchend = (e) => {
             e.preventDefault();
             this.uniforms.mouseDown = false;
         };
@@ -380,9 +383,10 @@ class PageManager {
                 location.hash = PageNames[i];
                 // history.pushState({}, '', 'button' + i.toString());
             };
-            button.ontouchend = (e) => {
-                location.hash = PageNames[i];
-            };
+            // button.ontouchend = (e: TouchEvent) =>
+            // {
+            //     location.hash = PageNames[i];
+            // };
             this.fSphereElementsContainer.appendChild(element);
             this.fSphereElementButtonsContainer.appendChild(button);
             this.fSphereElementTextContainer.appendChild(text);
