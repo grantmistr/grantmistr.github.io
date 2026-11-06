@@ -383,10 +383,10 @@ class PageManager {
                 location.hash = PageNames[i];
                 // history.pushState({}, '', 'button' + i.toString());
             };
-            // button.ontouchend = (e: TouchEvent) =>
-            // {
-            //     location.hash = PageNames[i];
-            // };
+            // for some reason onclick not working with touch for these buttons?
+            button.ontouchend = (e) => {
+                location.hash = PageNames[i];
+            };
             this.fSphereElementsContainer.appendChild(element);
             this.fSphereElementButtonsContainer.appendChild(button);
             this.fSphereElementTextContainer.appendChild(text);

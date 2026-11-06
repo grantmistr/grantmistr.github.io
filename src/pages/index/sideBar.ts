@@ -47,6 +47,18 @@ export function InitSideBar(): void
     sideBarToggleButton.onclick = OnToggleButtonClick;
     //sideBarToggleButton.ontouchend = OnToggleButtonClick;
 
+    document.addEventListener('click', (e: MouseEvent) =>
+    {
+        if (sideBarToggleButtonToggleState)
+        {
+            const node = e.target as Node;
+            if (!sideBarWrapper.contains(node) && !sideBarToggleButton.contains(node))
+            {
+                OnToggleButtonClick();
+            }
+        }
+    });
+
     function OnToggleButtonClick()
     {
         sideBarToggleButtonToggleState = !sideBarToggleButtonToggleState;
