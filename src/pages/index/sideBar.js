@@ -31,7 +31,7 @@ export function InitSideBar() {
     sideBarToggleButton.setAttribute('state', 'closed');
     sideBarWrapper.setAttribute('state', 'closed');
     sideBarToggleButton.onclick = OnToggleButtonClick;
-    sideBarToggleButton.ontouchend = OnToggleButtonClick;
+    //sideBarToggleButton.ontouchend = OnToggleButtonClick;
     function OnToggleButtonClick() {
         sideBarToggleButtonToggleState = !sideBarToggleButtonToggleState;
         if (sideBarToggleButtonToggleState) {
