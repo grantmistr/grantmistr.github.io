@@ -605,8 +605,8 @@ class PageManager {
     }
 }
 function Render(timeSinceLoad) {
-    const currentFrame = requestAnimationFrame(Render);
-    pageManager.FrameUpdate(timeSinceLoad, currentFrame);
+    const animationID = requestAnimationFrame(Render);
+    pageManager.FrameUpdate(timeSinceLoad, animationID);
 }
 function StartRender() {
     Render(0.0);

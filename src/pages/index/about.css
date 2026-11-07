@@ -56,7 +56,7 @@
 
 .aboutToggleButtonLine {
     --bounce-offset: -4px;
-    --bounce-animation-duration: 5s;
+    --bounce-animation-duration: 6s;
 
     position: absolute;
     width: 16px;
@@ -81,10 +81,10 @@
     0% {
         transform: translateY(0px) rotate(0.7rad);
     }
-    10% {
+    5% {
         transform: translateY(var(--bounce-offset)) rotate(0.7rad);
     }
-    20% {
+    10% {
         transform: translateY(0px) rotate(0.7rad);
     }
 }
@@ -103,10 +103,10 @@
     0% {
         transform: translateY(0px) rotate(2.44159265359rad);
     }
-    10% {
+    5% {
         transform: translateY(var(--bounce-offset)) rotate(2.44159265359rad);
     }
-    20% {
+    10% {
         transform: translateY(0px) rotate(2.44159265359rad);
     }
 }
@@ -126,10 +126,10 @@
     0% {
         transform: translateY(0px) rotate(0.7rad);
     }
-    10% {
+    5% {
         transform: translateY(var(--bounce-offset)) rotate(0.7rad);
     }
-    20% {
+    10% {
         transform: translateY(0px) rotate(0.7rad);
     }
 }
@@ -149,10 +149,10 @@
     0% {
         transform: translateY(0px) rotate(2.44159265359rad);
     }
-    10% {
+    5% {
         transform: translateY(var(--bounce-offset)) rotate(2.44159265359rad);
     }
-    20% {
+    10% {
         transform: translateY(0px) rotate(2.44159265359rad);
     }
 }

@@ -844,8 +844,8 @@ class PageManager
 
 function Render(timeSinceLoad: number): void
 {
-    const currentFrame = requestAnimationFrame(Render);
-    pageManager.FrameUpdate(timeSinceLoad, currentFrame);
+    const animationID = requestAnimationFrame(Render);
+    pageManager.FrameUpdate(timeSinceLoad, animationID);
 }
 
 function StartRender(): void

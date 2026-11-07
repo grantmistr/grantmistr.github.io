@@ -5,6 +5,8 @@ let timeSnapShot = 0.0;
 let animationID = 0;
 let resuming = false;
 let pageIndices = [PageIndices._home, PageIndices._home];
+let mousePos = [0.0, 0.0];
+let prevMousePos = [0.0, 0.0];
 const aboutToggleButton = document.getElementById('aboutToggleButton');
 const aboutWrapper = document.getElementById('aboutWrapper');
 const about = document.getElementById('about');
@@ -34,6 +36,20 @@ export function InitAbout() {
             aboutToggleButton.style.pointerEvents = 'none';
             aboutToggleButton.setAttribute('state', 'hidden');
             RestoreAboutOverlay();
+        }
+    };
+    aboutWrapper.ontouchstart = (e) => {
+        mousePos = [e.touches[0].clientX, e.touches[0].clientY];
+        prevMousePos = mousePos;
+    };
+    aboutWrapper.ontouchmove = (e) => {
+        prevMousePos = mousePos;
+        mousePos = [e.touches[0].clientX, e.touches[0].clientY];
+        const delta = [mousePos[0] - prevMousePos[0], -mousePos[1] + prevMousePos[1]];
+        if (pageIndices[0] === PageIndices._home) {
+            scrollVelocity += delta[1] * 0.0001;
+            resuming = true;
+            animationID = requestAnimationFrame(UpdateScrollValue);
         }
     };
     pageIndices[0] = GetLocationIndex(location.hash);
