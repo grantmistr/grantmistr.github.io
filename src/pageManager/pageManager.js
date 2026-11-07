@@ -65,7 +65,7 @@ export const NiceNames = {
     [PageIndices._contactinfo]: 'Contact Info',
     [PageIndices._home]: 'Home'
 };
-function GetLocationIndex(locationHash) {
+export function GetLocationIndex(locationHash) {
     const s = locationHash.slice(1); // remove #
     switch (s) {
         case PageNames[PageIndices._projects]:
@@ -88,6 +88,12 @@ function GetLocationIndex(locationHash) {
             return PageIndices._home;
     }
 }
+const updatedPageIndicesEvent = new CustomEvent('updatedPageIndices', {
+    detail: {
+        index: PageIndices._home,
+        previousIndex: PageIndices._home
+    }
+});
 class PageManager {
     TARGET_FPS = 100.0;
     TARGET_MS = 1000.0 / this.TARGET_FPS;
@@ -158,6 +164,9 @@ class PageManager {
         window.onhashchange = (e) => {
             this.UpdatePageIndices(location.hash, e.oldURL);
             // this.UpdatePageState(location.hash, e.oldURL);
+            updatedPageIndicesEvent.detail.index = this.pageIndices[0];
+            updatedPageIndicesEvent.detail.previousIndex = this.pageIndices[1];
+            window.dispatchEvent(updatedPageIndicesEvent);
         };
         window.onresize = (e) => {
             this.uniforms.screenSize = [window.innerWidth, window.innerHeight];
@@ -215,6 +224,7 @@ class PageManager {
     }
     SetInitialPageState(locationHash) {
         const i = GetLocationIndex(locationHash);
+        this.pageIndices[0] = i;
         this.clickButton = i !== PageIndices._home;
         this.clickTargetIndex = i;
         this.clickTimeSnapshot = -999999.0;
@@ -601,4 +611,7 @@ function Render(timeSinceLoad) {
 function StartRender() {
     Render(0.0);
 }
-export const pageManager = new PageManager();
+export function InitPageManager() {
+    pageManager.Initialize();
+}
+const pageManager = new PageManager();

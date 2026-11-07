@@ -1,5 +1,4 @@
 import { NiceNames, PAGE_COUNT, PageNames } from "../../pageManager/pageManager.js";
-import { ClearAboutOverlay } from "./about.js";
 
 let sideBarToggleButtonToggleState = false;
 
@@ -18,7 +17,6 @@ export function InitSideBar(): void
         navButton.onclick = () =>
         {
             location.hash = PageNames[i];
-            ClearAboutOverlay();
         };
 
         // navButton.ontouchend = () =>
@@ -52,7 +50,7 @@ export function InitSideBar(): void
         if (sideBarToggleButtonToggleState)
         {
             const node = e.target as Node;
-            if (!sideBarWrapper.contains(node) && !sideBarToggleButton.contains(node))
+            if (!(sideBarWrapper.contains(node) || sideBarToggleButton.contains(node)))
             {
                 OnToggleButtonClick();
             }

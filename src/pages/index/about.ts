@@ -1,9 +1,13 @@
+import { GetLocationIndex, PageIndices, UpdatedPageIndicesPayload } from "../../pageManager/pageManager.js";
+
 let scrollValue = 0.0;
 let scrollVelocity = 0.0;
 let timeSnapShot = 0.0;
 let animationID = 0;
 let resuming = false;
+let pageIndices = [PageIndices._home, PageIndices._home];
 
+const aboutToggleButton = document.getElementById('aboutToggleButton') as HTMLDivElement;
 const aboutWrapper = document.getElementById('aboutWrapper') as HTMLDivElement;
 const about = document.getElementById('about') as HTMLDivElement;
 
@@ -11,13 +15,48 @@ export function InitAbout(): void
 {
     window.onwheel = (e: WheelEvent) =>
     {
-        scrollVelocity += e.deltaY * 0.0001;
+        if (pageIndices[0] === PageIndices._home)
+        {
+            scrollVelocity += e.deltaY * 0.0001;
+            resuming = true;
+            animationID = requestAnimationFrame(UpdateScrollValue);
+        }
+    };
 
-        resuming = true;
+    window.addEventListener('updatedPageIndices', ((e: CustomEvent<UpdatedPageIndicesPayload>) =>
+    {
+        pageIndices[0] = e.detail.index;
+        pageIndices[1] = e.detail.previousIndex;
 
-        animationID = requestAnimationFrame(UpdateScrollValue);
+        if (pageIndices[0] !== PageIndices._home)
+        {
+            aboutToggleButton.style.pointerEvents = 'none';
+            aboutToggleButton.setAttribute('state', 'hidden');
+            ClearAboutOverlay();
+        }
+        else
+        {
+            aboutToggleButton.style.pointerEvents = 'auto';
+            aboutToggleButton.setAttribute('state', 'visible');
+        }
+    }) as EventListener);
 
-    }, { passive: false };
+    aboutToggleButton.onclick = (e: PointerEvent) =>
+    {
+        if (pageIndices[0] === PageIndices._home)
+        {
+            aboutToggleButton.style.pointerEvents = 'none';
+            aboutToggleButton.setAttribute('state', 'hidden');
+            RestoreAboutOverlay();
+        }
+    };
+
+    pageIndices[0] = GetLocationIndex(location.hash);
+
+    if (pageIndices[0] !== PageIndices._home)
+    {
+        scrollValue = 1.0;
+    }
 
     animationID = requestAnimationFrame(UpdateScrollValue);
 }
@@ -50,11 +89,20 @@ function UpdateScrollValue(timeSinceLoad: number): void
     {
         aboutWrapper.style.pointerEvents = 'none'; 
         aboutWrapper.style.visibility = 'hidden';
+
+        if (pageIndices[0] === PageIndices._home)
+        {
+            aboutToggleButton.style.pointerEvents = 'auto';
+            aboutToggleButton.setAttribute('state', 'visible');
+        }
     }
     else
     {
         aboutWrapper.style.pointerEvents = 'auto';
         aboutWrapper.style.visibility = 'visible';
+
+        aboutToggleButton.style.pointerEvents = 'none';
+        aboutToggleButton.setAttribute('state', 'hidden');
     }
 
     if ((scrollValue >= 1.0) || (scrollValue <= 0.0))
@@ -74,10 +122,17 @@ function UpdateScrollValue(timeSinceLoad: number): void
     timeSnapShot = timeSinceLoad;
 }
 
-export function ClearAboutOverlay(): void
+function ClearAboutOverlay(): void
 {
     cancelAnimationFrame(animationID);
     scrollVelocity = 0.01;
+    resuming = true;
+    animationID = requestAnimationFrame(UpdateScrollValue);
+}
+
+function RestoreAboutOverlay(): void
+{
+    scrollVelocity += -0.01;
     resuming = true;
     animationID = requestAnimationFrame(UpdateScrollValue);
 }

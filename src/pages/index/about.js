@@ -1,16 +1,45 @@
+import { GetLocationIndex, PageIndices } from "../../pageManager/pageManager.js";
 let scrollValue = 0.0;
 let scrollVelocity = 0.0;
 let timeSnapShot = 0.0;
 let animationID = 0;
 let resuming = false;
+let pageIndices = [PageIndices._home, PageIndices._home];
+const aboutToggleButton = document.getElementById('aboutToggleButton');
 const aboutWrapper = document.getElementById('aboutWrapper');
 const about = document.getElementById('about');
 export function InitAbout() {
     window.onwheel = (e) => {
-        scrollVelocity += e.deltaY * 0.0001;
-        resuming = true;
-        animationID = requestAnimationFrame(UpdateScrollValue);
-    }, { passive: false };
+        if (pageIndices[0] === PageIndices._home) {
+            scrollVelocity += e.deltaY * 0.0001;
+            resuming = true;
+            animationID = requestAnimationFrame(UpdateScrollValue);
+        }
+    };
+    window.addEventListener('updatedPageIndices', ((e) => {
+        pageIndices[0] = e.detail.index;
+        pageIndices[1] = e.detail.previousIndex;
+        if (pageIndices[0] !== PageIndices._home) {
+            aboutToggleButton.style.pointerEvents = 'none';
+            aboutToggleButton.setAttribute('state', 'hidden');
+            ClearAboutOverlay();
+        }
+        else {
+            aboutToggleButton.style.pointerEvents = 'auto';
+            aboutToggleButton.setAttribute('state', 'visible');
+        }
+    }));
+    aboutToggleButton.onclick = (e) => {
+        if (pageIndices[0] === PageIndices._home) {
+            aboutToggleButton.style.pointerEvents = 'none';
+            aboutToggleButton.setAttribute('state', 'hidden');
+            RestoreAboutOverlay();
+        }
+    };
+    pageIndices[0] = GetLocationIndex(location.hash);
+    if (pageIndices[0] !== PageIndices._home) {
+        scrollValue = 1.0;
+    }
     animationID = requestAnimationFrame(UpdateScrollValue);
 }
 function UpdateScrollValue(timeSinceLoad) {
@@ -33,10 +62,16 @@ function UpdateScrollValue(timeSinceLoad) {
     if (scrollValue >= 1.0) {
         aboutWrapper.style.pointerEvents = 'none';
         aboutWrapper.style.visibility = 'hidden';
+        if (pageIndices[0] === PageIndices._home) {
+            aboutToggleButton.style.pointerEvents = 'auto';
+            aboutToggleButton.setAttribute('state', 'visible');
+        }
     }
     else {
         aboutWrapper.style.pointerEvents = 'auto';
         aboutWrapper.style.visibility = 'visible';
+        aboutToggleButton.style.pointerEvents = 'none';
+        aboutToggleButton.setAttribute('state', 'hidden');
     }
     if ((scrollValue >= 1.0) || (scrollValue <= 0.0)) {
         scrollVelocity = 0.0;
@@ -50,9 +85,14 @@ function UpdateScrollValue(timeSinceLoad) {
     scrollVelocity = Math.max(Math.abs(scrollVelocity), 0.01) * Math.sign(scrollVelocity);
     timeSnapShot = timeSinceLoad;
 }
-export function ClearAboutOverlay() {
+function ClearAboutOverlay() {
     cancelAnimationFrame(animationID);
     scrollVelocity = 0.01;
+    resuming = true;
+    animationID = requestAnimationFrame(UpdateScrollValue);
+}
+function RestoreAboutOverlay() {
+    scrollVelocity += -0.01;
     resuming = true;
     animationID = requestAnimationFrame(UpdateScrollValue);
 }

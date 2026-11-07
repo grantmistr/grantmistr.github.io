@@ -79,7 +79,7 @@ export const NiceNames =
     [PageIndices._home]: 'Home'
 };
 
-function GetLocationIndex(locationHash: string): number
+export function GetLocationIndex(locationHash: string): number
 {
     const s = locationHash.slice(1); // remove #
     switch(s)
@@ -104,6 +104,30 @@ function GetLocationIndex(locationHash: string): number
             return PageIndices._home;
     }
 }
+
+export interface UpdatedPageIndicesPayload
+{
+    index: number;
+    previousIndex: number;
+}
+
+declare global
+{
+    interface CustomEventMap
+    {
+        'updatedPageIndices': CustomEvent<UpdatedPageIndicesPayload>;
+    }
+}
+
+const updatedPageIndicesEvent = new CustomEvent('updatedPageIndices',
+    {
+        detail:
+        {
+            index: PageIndices._home,
+            previousIndex: PageIndices._home
+        }
+    }
+);
 
 class PageManager
 {
@@ -201,6 +225,11 @@ class PageManager
         {
             this.UpdatePageIndices(location.hash, e.oldURL);
             // this.UpdatePageState(location.hash, e.oldURL);
+
+            updatedPageIndicesEvent.detail.index = this.pageIndices[0];
+            updatedPageIndicesEvent.detail.previousIndex = this.pageIndices[1];
+
+            window.dispatchEvent(updatedPageIndicesEvent);
         };
 
         window.onresize = (e: UIEvent) =>
@@ -287,6 +316,8 @@ class PageManager
     private SetInitialPageState(locationHash: string): void
     {
         const i = GetLocationIndex(locationHash);
+
+        this.pageIndices[0] = i;
 
         this.clickButton = i !== PageIndices._home;
         this.clickTargetIndex = i;
@@ -822,4 +853,9 @@ function StartRender(): void
     Render(0.0);
 }
 
-export const pageManager = new PageManager();
+export function InitPageManager(): void
+{
+    pageManager.Initialize();
+}
+
+const pageManager = new PageManager();

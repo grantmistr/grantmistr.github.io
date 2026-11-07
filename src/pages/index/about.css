@@ -1,0 +1,179 @@
+#aboutToggleButton {
+    position: fixed;
+    width: 40px;
+    height: 40px;
+    border-radius: 20px;
+    top: 40px;
+    z-index: 3;
+    opacity: 0.0;
+
+    transition-property: opacity;
+    transition-duration: 0.5s;
+}
+
+#aboutToggleButton[state='visible'] {
+    opacity: 1.0;
+}
+
+#aboutToggleButton[state='hidden'] {
+    opacity: 0.0;
+}
+
+#aboutToggleButton:hover {
+    cursor: pointer;
+}
+
+#aboutToggleButton:active {
+    transform: scale(0.9);
+}
+
+@keyframes pop {
+    0% {
+        transform: translateX(-50%) scale(1.0);
+    }
+    50% {
+        transform: translateX(-50%) scale(0.8);
+    }
+    100% {
+        transform: translateX(-50%) scale(1.0);
+    }
+}
+
+#aboutToggleButtonBackground {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    background-color: white;
+    opacity: 0;
+
+    transition-property: opacity;
+    transition-duration: 0.2s;
+}
+
+#aboutToggleButton:hover #aboutToggleButtonBackground {
+    opacity: 0.2;
+}
+
+.aboutToggleButtonLine {
+    --bounce-offset: -4px;
+    --bounce-animation-duration: 5s;
+
+    position: absolute;
+    width: 16px;
+    height: 3px;
+    left: 19px;
+    border-radius: 2px;
+    background-color: rgb(150, 150, 150);
+    transform-origin: 1px center;
+}
+
+#aboutToggleButtonLine0 {
+    top: 7px;
+    transform: rotate(0.7rad);
+
+    animation-name: bounceLine0;
+    animation-duration: var(--bounce-animation-duration);
+    animation-iteration-count: infinite;
+    animation-timing-function: ease-out;
+}
+
+@keyframes bounceLine0 {
+    0% {
+        transform: translateY(0px) rotate(0.7rad);
+    }
+    10% {
+        transform: translateY(var(--bounce-offset)) rotate(0.7rad);
+    }
+    20% {
+        transform: translateY(0px) rotate(0.7rad);
+    }
+}
+
+#aboutToggleButtonLine1 {
+    top: 7px;
+    transform: rotate(2.44159265359rad);
+
+    animation-name: bounceLine1;
+    animation-duration: var(--bounce-animation-duration);
+    animation-iteration-count: infinite;
+    animation-timing-function: ease-out;
+}
+
+@keyframes bounceLine1 {
+    0% {
+        transform: translateY(0px) rotate(2.44159265359rad);
+    }
+    10% {
+        transform: translateY(var(--bounce-offset)) rotate(2.44159265359rad);
+    }
+    20% {
+        transform: translateY(0px) rotate(2.44159265359rad);
+    }
+}
+
+#aboutToggleButtonLine2 {
+    top: 17px;
+    transform: rotate(0.7rad);
+
+    animation-name: bounceLine2;
+    animation-duration: var(--bounce-animation-duration);
+    animation-iteration-count: infinite;
+    animation-timing-function: ease-out;
+    animation-delay: 0.1s;
+}
+
+@keyframes bounceLine2 {
+    0% {
+        transform: translateY(0px) rotate(0.7rad);
+    }
+    10% {
+        transform: translateY(var(--bounce-offset)) rotate(0.7rad);
+    }
+    20% {
+        transform: translateY(0px) rotate(0.7rad);
+    }
+}
+
+#aboutToggleButtonLine3 {
+    top: 17px;
+    transform: rotate(2.44159265359rad);
+
+    animation-name: bounceLine3;
+    animation-duration: var(--bounce-animation-duration);
+    animation-iteration-count: infinite;
+    animation-timing-function: ease-out;
+    animation-delay: 0.1s;
+}
+
+@keyframes bounceLine3 {
+    0% {
+        transform: translateY(0px) rotate(2.44159265359rad);
+    }
+    10% {
+        transform: translateY(var(--bounce-offset)) rotate(2.44159265359rad);
+    }
+    20% {
+        transform: translateY(0px) rotate(2.44159265359rad);
+    }
+}
+
+#aboutWrapper {
+    position: fixed;
+    width: 100vw;
+    height: 100vh;
+    z-index: 1;
+    backdrop-filter: blur(16px);
+}
+
+#about {
+    position: fixed;
+    top: 120px;
+    right: 60px;
+    left: max(min(300px, calc(100vw - 500px)), 60px);
+    max-width: 800px;
+    font-size: xx-large;
+    z-index: 1;
+    filter: blur(0.1px);
+    opacity: 1.0;
+    transform: translateY(0px);
+}
