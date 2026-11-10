@@ -19,7 +19,7 @@ export function InitAbout(): void
     {
         if (pageIndices[0] === PageIndices._home)
         {
-            scrollVelocity += e.deltaY * 0.0001;
+            scrollVelocity += e.deltaY * 0.0002;
             resuming = true;
             animationID = requestAnimationFrame(UpdateScrollValue);
         }
@@ -65,13 +65,12 @@ export function InitAbout(): void
     {
         e.preventDefault();
 
-        prevMousePos = mousePos;
-        mousePos = [e.touches[0].clientX, e.touches[0].clientY];
-        const delta = [mousePos[0] - prevMousePos[0], -mousePos[1] + prevMousePos[1]];
-
         if (pageIndices[0] === PageIndices._home)
         {
-            scrollVelocity += delta[1] * 0.0001;
+            prevMousePos = mousePos;
+            mousePos = [e.touches[0].clientX, e.touches[0].clientY];
+            const deltaY = -mousePos[1] + prevMousePos[1];
+            scrollVelocity += deltaY * 0.001;
             resuming = true;
             animationID = requestAnimationFrame(UpdateScrollValue);
         }
@@ -142,8 +141,8 @@ function UpdateScrollValue(timeSinceLoad: number): void
         animationID = requestAnimationFrame(UpdateScrollValue);
     }
 
-    scrollVelocity *= Math.max(1.0 - timeDelta * 0.01, 0.0);
-    scrollVelocity = Math.abs(scrollVelocity) * Math.sign(scrollVelocity);
+    scrollVelocity *= Math.max(1.0 - timeDelta * 0.005, 0.0);
+    scrollVelocity = Math.max(Math.abs(scrollVelocity), 0.01) * Math.sign(scrollVelocity);
 
     timeSnapShot = timeSinceLoad;
 }
