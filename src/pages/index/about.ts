@@ -55,12 +55,16 @@ export function InitAbout(): void
 
     aboutWrapper.ontouchstart = (e: TouchEvent) =>
     {
+        e.preventDefault();
+
         mousePos = [e.touches[0].clientX, e.touches[0].clientY];
         prevMousePos = mousePos;
     };
 
     aboutWrapper.ontouchmove = (e: TouchEvent) =>
     {
+        e.preventDefault();
+
         prevMousePos = mousePos;
         mousePos = [e.touches[0].clientX, e.touches[0].clientY];
         const delta = [mousePos[0] - prevMousePos[0], -mousePos[1] + prevMousePos[1]];
