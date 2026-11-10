@@ -39,10 +39,12 @@ export function InitAbout() {
         }
     };
     aboutWrapper.ontouchstart = (e) => {
+        e.preventDefault();
         mousePos = [e.touches[0].clientX, e.touches[0].clientY];
         prevMousePos = mousePos;
     };
     aboutWrapper.ontouchmove = (e) => {
+        e.preventDefault();
         prevMousePos = mousePos;
         mousePos = [e.touches[0].clientX, e.touches[0].clientY];
         const delta = [mousePos[0] - prevMousePos[0], -mousePos[1] + prevMousePos[1]];
@@ -97,8 +99,8 @@ function UpdateScrollValue(timeSinceLoad) {
     else {
         animationID = requestAnimationFrame(UpdateScrollValue);
     }
-    scrollVelocity *= Math.max(1.0 - timeDelta * 0.004, 0.0);
-    scrollVelocity = Math.max(Math.abs(scrollVelocity), 0.01) * Math.sign(scrollVelocity);
+    scrollVelocity *= Math.max(1.0 - timeDelta * 0.01, 0.0);
+    scrollVelocity = Math.abs(scrollVelocity) * Math.sign(scrollVelocity);
     timeSnapShot = timeSinceLoad;
 }
 function ClearAboutOverlay() {

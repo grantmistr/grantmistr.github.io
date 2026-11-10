@@ -142,8 +142,8 @@ function UpdateScrollValue(timeSinceLoad: number): void
         animationID = requestAnimationFrame(UpdateScrollValue);
     }
 
-    scrollVelocity *= Math.max(1.0 - timeDelta * 0.004, 0.0);
-    scrollVelocity = Math.max(Math.abs(scrollVelocity), 0.01) * Math.sign(scrollVelocity);
+    scrollVelocity *= Math.max(1.0 - timeDelta * 0.01, 0.0);
+    scrollVelocity = Math.abs(scrollVelocity) * Math.sign(scrollVelocity);
 
     timeSnapShot = timeSinceLoad;
 }

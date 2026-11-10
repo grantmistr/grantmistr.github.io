@@ -13,8 +13,7 @@ body {
     display: flex;
     justify-content: center;
     color: white;
-    font-family: monospace;
-
+    font-family: Verdana, sans-serif;
 }
 
 #mainContent {
