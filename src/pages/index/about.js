@@ -11,9 +11,34 @@ const aboutToggleButton = document.getElementById('aboutToggleButton');
 const aboutWrapper = document.getElementById('aboutWrapper');
 const about = document.getElementById('about');
 export function InitAbout() {
-    window.onwheel = (e) => {
+    // window.onwheel = (e: WheelEvent) =>
+    // {
+    //     if (pageIndices[0] === PageIndices._home)
+    //     {
+    //         scrollVelocity += e.deltaY * 0.0002;
+    //         resuming = true;
+    //         animationID = requestAnimationFrame(UpdateScrollValue);
+    //     }
+    // };
+    window.addEventListener('wheel', (e) => {
         if (pageIndices[0] === PageIndices._home) {
             scrollVelocity += e.deltaY * 0.0002;
+            resuming = true;
+            animationID = requestAnimationFrame(UpdateScrollValue);
+        }
+    });
+    aboutWrapper.ontouchstart = (e) => {
+        e.preventDefault();
+        mousePos = [e.touches[0].clientX, e.touches[0].clientY];
+        prevMousePos = mousePos;
+    };
+    aboutWrapper.ontouchmove = (e) => {
+        e.preventDefault();
+        if (pageIndices[0] === PageIndices._home) {
+            prevMousePos = mousePos;
+            mousePos = [e.touches[0].clientX, e.touches[0].clientY];
+            const deltaY = -mousePos[1] + prevMousePos[1];
+            scrollVelocity += deltaY * 0.001;
             resuming = true;
             animationID = requestAnimationFrame(UpdateScrollValue);
         }
@@ -36,22 +61,6 @@ export function InitAbout() {
             aboutToggleButton.style.pointerEvents = 'none';
             aboutToggleButton.setAttribute('state', 'hidden');
             RestoreAboutOverlay();
-        }
-    };
-    aboutWrapper.ontouchstart = (e) => {
-        e.preventDefault();
-        mousePos = [e.touches[0].clientX, e.touches[0].clientY];
-        prevMousePos = mousePos;
-    };
-    aboutWrapper.ontouchmove = (e) => {
-        e.preventDefault();
-        if (pageIndices[0] === PageIndices._home) {
-            prevMousePos = mousePos;
-            mousePos = [e.touches[0].clientX, e.touches[0].clientY];
-            const deltaY = -mousePos[1] + prevMousePos[1];
-            scrollVelocity += deltaY * 0.001;
-            resuming = true;
-            animationID = requestAnimationFrame(UpdateScrollValue);
         }
     };
     pageIndices[0] = GetLocationIndex(location.hash);
@@ -110,7 +119,7 @@ function ClearAboutOverlay() {
     animationID = requestAnimationFrame(UpdateScrollValue);
 }
 function RestoreAboutOverlay() {
-    scrollVelocity += -0.01;
+    scrollVelocity = -0.01;
     resuming = true;
     animationID = requestAnimationFrame(UpdateScrollValue);
 }

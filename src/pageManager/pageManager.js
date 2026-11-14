@@ -141,7 +141,6 @@ class PageManager {
     clickRotationTheta = 0.0;
     clickMatrixSnapshot = Mat3.IDENTITY;
     clickZOffsetSnapshot = this.constants.DEFAULT_CAMERA_POSITION[2];
-    currentFrame = 0;
     constructor() {
     }
     Initialize() {
@@ -184,6 +183,7 @@ class PageManager {
             this.uniforms.mousePosition = [e.clientX - rect.left, e.clientY - rect.top];
             this.uniforms.mouseDelta = [this.uniforms.mousePosition[0] - this.uniforms.prevMousePosition[0], -this.uniforms.mousePosition[1] + this.uniforms.prevMousePosition[1]];
         };
+        //this.mainContent.ontouchmove = (e: TouchEvent) =>
         window.ontouchmove = (e) => {
             e.preventDefault();
             const rect = this.gl.canvas.getBoundingClientRect();
@@ -584,8 +584,7 @@ class PageManager {
             this.camera.position[2] = z;
         }
     }
-    FrameUpdate(timeSinceLoad, currentFrame) {
-        this.currentFrame = currentFrame;
+    FrameUpdate(timeSinceLoad) {
         if ((timeSinceLoad - this.uniforms.time) < this.TARGET_MS) {
             return;
         }
@@ -606,7 +605,7 @@ class PageManager {
 }
 function Render(timeSinceLoad) {
     const animationID = requestAnimationFrame(Render);
-    pageManager.FrameUpdate(timeSinceLoad, animationID);
+    pageManager.FrameUpdate(timeSinceLoad);
 }
 function StartRender() {
     Render(0.0);
@@ -614,4 +613,4 @@ function StartRender() {
 export function InitPageManager() {
     pageManager.Initialize();
 }
-const pageManager = new PageManager();
+export const pageManager = new PageManager();

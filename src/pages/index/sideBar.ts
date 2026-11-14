@@ -45,7 +45,7 @@ export function InitSideBar(): void
     sideBarToggleButton.onclick = OnToggleButtonClick;
     //sideBarToggleButton.ontouchend = OnToggleButtonClick;
 
-    document.addEventListener('click', (e: MouseEvent) =>
+    document.body.addEventListener('click', (e: MouseEvent) =>
     {
         if (sideBarToggleButtonToggleState)
         {

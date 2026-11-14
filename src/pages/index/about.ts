@@ -1,4 +1,4 @@
-import { GetLocationIndex, PageIndices, UpdatedPageIndicesPayload } from "../../pageManager/pageManager.js";
+import { GetLocationIndex, PageIndices, UpdatedPageIndicesEventData } from "../../pageManager/pageManager.js";
 
 let scrollValue = 0.0;
 let scrollVelocity = 0.0;
@@ -15,7 +15,17 @@ const about = document.getElementById('about') as HTMLDivElement;
 
 export function InitAbout(): void
 {
-    window.onwheel = (e: WheelEvent) =>
+    // window.onwheel = (e: WheelEvent) =>
+    // {
+    //     if (pageIndices[0] === PageIndices._home)
+    //     {
+    //         scrollVelocity += e.deltaY * 0.0002;
+    //         resuming = true;
+    //         animationID = requestAnimationFrame(UpdateScrollValue);
+    //     }
+    // };
+
+    window.addEventListener('wheel', (e: WheelEvent) =>
     {
         if (pageIndices[0] === PageIndices._home)
         {
@@ -23,9 +33,32 @@ export function InitAbout(): void
             resuming = true;
             animationID = requestAnimationFrame(UpdateScrollValue);
         }
+    });
+
+    aboutWrapper.ontouchstart = (e: TouchEvent) =>
+    {
+        e.preventDefault();
+
+        mousePos = [e.touches[0].clientX, e.touches[0].clientY];
+        prevMousePos = mousePos;
     };
 
-    window.addEventListener('updatedPageIndices', ((e: CustomEvent<UpdatedPageIndicesPayload>) =>
+    aboutWrapper.ontouchmove = (e: TouchEvent) =>
+    {
+        e.preventDefault();
+
+        if (pageIndices[0] === PageIndices._home)
+        {
+            prevMousePos = mousePos;
+            mousePos = [e.touches[0].clientX, e.touches[0].clientY];
+            const deltaY = -mousePos[1] + prevMousePos[1];
+            scrollVelocity += deltaY * 0.001;
+            resuming = true;
+            animationID = requestAnimationFrame(UpdateScrollValue);
+        }
+    };
+
+    window.addEventListener('updatedPageIndices', ((e: CustomEvent<UpdatedPageIndicesEventData>) =>
     {
         pageIndices[0] = e.detail.index;
         pageIndices[1] = e.detail.previousIndex;
@@ -50,29 +83,6 @@ export function InitAbout(): void
             aboutToggleButton.style.pointerEvents = 'none';
             aboutToggleButton.setAttribute('state', 'hidden');
             RestoreAboutOverlay();
-        }
-    };
-
-    aboutWrapper.ontouchstart = (e: TouchEvent) =>
-    {
-        e.preventDefault();
-
-        mousePos = [e.touches[0].clientX, e.touches[0].clientY];
-        prevMousePos = mousePos;
-    };
-
-    aboutWrapper.ontouchmove = (e: TouchEvent) =>
-    {
-        e.preventDefault();
-
-        if (pageIndices[0] === PageIndices._home)
-        {
-            prevMousePos = mousePos;
-            mousePos = [e.touches[0].clientX, e.touches[0].clientY];
-            const deltaY = -mousePos[1] + prevMousePos[1];
-            scrollVelocity += deltaY * 0.001;
-            resuming = true;
-            animationID = requestAnimationFrame(UpdateScrollValue);
         }
     };
 
@@ -157,7 +167,7 @@ function ClearAboutOverlay(): void
 
 function RestoreAboutOverlay(): void
 {
-    scrollVelocity += -0.01;
+    scrollVelocity = -0.01;
     resuming = true;
     animationID = requestAnimationFrame(UpdateScrollValue);
 }

@@ -105,7 +105,7 @@ export function GetLocationIndex(locationHash: string): number
     }
 }
 
-export interface UpdatedPageIndicesPayload
+export interface UpdatedPageIndicesEventData
 {
     index: number;
     previousIndex: number;
@@ -115,7 +115,7 @@ declare global
 {
     interface CustomEventMap
     {
-        'updatedPageIndices': CustomEvent<UpdatedPageIndicesPayload>;
+        'updatedPageIndices': CustomEvent<UpdatedPageIndicesEventData>;
     }
 }
 
@@ -191,8 +191,6 @@ class PageManager
     private clickMatrixSnapshot: Mat3.Mat3 = Mat3.IDENTITY;
     private clickZOffsetSnapshot = this.constants.DEFAULT_CAMERA_POSITION[2];
 
-    private currentFrame = 0;
-
     public constructor()
     {
     }
@@ -253,6 +251,7 @@ class PageManager
             this.uniforms.mouseDelta = [this.uniforms.mousePosition[0] - this.uniforms.prevMousePosition[0], -this.uniforms.mousePosition[1] + this.uniforms.prevMousePosition[1]];
         };
 
+        //this.mainContent.ontouchmove = (e: TouchEvent) =>
         window.ontouchmove = (e: TouchEvent) =>
         {
             e.preventDefault();
@@ -812,10 +811,8 @@ class PageManager
         }
     }
 
-    public FrameUpdate(timeSinceLoad: number, currentFrame: number): void
+    public FrameUpdate(timeSinceLoad: number): void
     {
-        this.currentFrame = currentFrame;
-
         if ((timeSinceLoad - this.uniforms.time) < this.TARGET_MS)
         {
             return;
@@ -845,7 +842,7 @@ class PageManager
 function Render(timeSinceLoad: number): void
 {
     const animationID = requestAnimationFrame(Render);
-    pageManager.FrameUpdate(timeSinceLoad, animationID);
+    pageManager.FrameUpdate(timeSinceLoad);
 }
 
 function StartRender(): void
@@ -858,4 +855,4 @@ export function InitPageManager(): void
     pageManager.Initialize();
 }
 
-const pageManager = new PageManager();
+export const pageManager = new PageManager();

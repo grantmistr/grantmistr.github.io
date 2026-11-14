@@ -27,18 +27,6 @@
     transform: scale(0.9);
 }
 
-@keyframes pop {
-    0% {
-        transform: translateX(-50%) scale(1.0);
-    }
-    50% {
-        transform: translateX(-50%) scale(0.8);
-    }
-    100% {
-        transform: translateX(-50%) scale(1.0);
-    }
-}
-
 #aboutToggleButtonBackground {
     width: 100%;
     height: 100%;
@@ -171,7 +159,7 @@
     right: 60px;
     left: max(min(300px, calc(100vw - 500px)), 60px);
     max-width: 800px;
-    font-size: xx-large;
+    font-size: 30px;
     z-index: 1;
     filter: blur(0.1px);
     opacity: 1.0;
